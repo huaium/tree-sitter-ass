@@ -1,0 +1,38 @@
+{
+  "$schema": "https://tree-sitter.github.io/tree-sitter/assets/schemas/config.schema.json",
+  "grammars": [
+    {
+      "name": "ass",
+      "camelcase": "Ass",
+      "title": "Ass",
+      "scope": "source.ass",
+      "file-types": ["ass", "ssa"],
+      "injection-regex": "^(ass|ssa)$",
+      "class-name": "TreeSitterAss"
+    }
+  ],
+  "metadata": {
+    "version": "0.1.0",
+    "license": "MIT",
+    "description": "A tree-sitter parser for ass/ssa subtitles",
+    "authors": [
+      {
+        "name": "Huaium",
+        "email": "huaium233@gmail.com",
+        "url": "https://github.com/huaium"
+      }
+    ],
+    "links": {
+      "repository": "https://github.com/huaium/tree-sitter-ass"
+    }
+  },
+  "bindings": {
+    "c": true,
+    "go": true,
+    "node": true,
+    "python": true,
+    "rust": true,
+    "swift": true,
+    "zig": false
+  }
+}
