@@ -3,7 +3,7 @@
   "name": "ass",
   "rules": {
     "source_file": {
-      "type": "REPEAT1",
+      "type": "REPEAT",
       "content": {
         "type": "SYMBOL",
         "name": "section"
@@ -60,11 +60,79 @@
       ]
     },
     "section_name": {
-      "type": "TOKEN",
-      "content": {
-        "type": "PATTERN",
-        "value": "[^\\]]+"
-      }
+      "type": "CHOICE",
+      "members": [
+        {
+          "type": "ALIAS",
+          "content": {
+            "type": "CHOICE",
+            "members": [
+              {
+                "type": "PATTERN",
+                "value": "[vV][44]\\s+[sS][tT][yY][lL][eE][sS]"
+              },
+              {
+                "type": "PATTERN",
+                "value": "[vV][44][++]\\s+[sS][tT][yY][lL][eE][sS]"
+              }
+            ]
+          },
+          "named": true,
+          "value": "section_name_styles"
+        },
+        {
+          "type": "ALIAS",
+          "content": {
+            "type": "PATTERN",
+            "value": "[sS][cC][rR][iI][pP][tT]\\s+[iI][nN][fF][oO]"
+          },
+          "named": true,
+          "value": "section_name_script info"
+        },
+        {
+          "type": "ALIAS",
+          "content": {
+            "type": "PATTERN",
+            "value": "[eE][vV][eE][nN][tT][sS]"
+          },
+          "named": true,
+          "value": "section_name_events"
+        },
+        {
+          "type": "ALIAS",
+          "content": {
+            "type": "PATTERN",
+            "value": "[fF][oO][nN][tT][sS]"
+          },
+          "named": true,
+          "value": "section_name_fonts"
+        },
+        {
+          "type": "ALIAS",
+          "content": {
+            "type": "PATTERN",
+            "value": "[gG][rR][aA][pP][hH][iI][cC][sS]"
+          },
+          "named": true,
+          "value": "section_name_graphics"
+        },
+        {
+          "type": "PREC",
+          "value": -1,
+          "content": {
+            "type": "ALIAS",
+            "content": {
+              "type": "TOKEN",
+              "content": {
+                "type": "PATTERN",
+                "value": "[^\\]]+"
+              }
+            },
+            "named": true,
+            "value": "section_name_custom"
+          }
+        }
+      ]
     },
     "comment": {
       "type": "TOKEN",
@@ -72,8 +140,17 @@
         "type": "SEQ",
         "members": [
           {
-            "type": "STRING",
-            "value": ";"
+            "type": "CHOICE",
+            "members": [
+              {
+                "type": "STRING",
+                "value": ";"
+              },
+              {
+                "type": "STRING",
+                "value": "!:"
+              }
+            ]
           },
           {
             "type": "PATTERN",
@@ -100,11 +177,277 @@
       ]
     },
     "key": {
-      "type": "TOKEN",
-      "content": {
-        "type": "PATTERN",
-        "value": "[^:\\[\\r\\n]+"
-      }
+      "type": "CHOICE",
+      "members": [
+        {
+          "type": "ALIAS",
+          "content": {
+            "type": "CHOICE",
+            "members": [
+              {
+                "type": "PATTERN",
+                "value": "[sS][cC][rR][iI][pP][tT][tT][yY][pP][eE]"
+              },
+              {
+                "type": "PATTERN",
+                "value": "[sS][cC][rR][iI][pP][tT]\\s+[tT][yY][pP][eE]"
+              }
+            ]
+          },
+          "named": true,
+          "value": "key_script_type"
+        },
+        {
+          "type": "ALIAS",
+          "content": {
+            "type": "PATTERN",
+            "value": "[tT][iI][tT][lL][eE]"
+          },
+          "named": true,
+          "value": "key_title"
+        },
+        {
+          "type": "ALIAS",
+          "content": {
+            "type": "PATTERN",
+            "value": "[oO][rR][iI][gG][iI][nN][aA][lL]\\s+[sS][cC][rR][iI][pP][tT]"
+          },
+          "named": true,
+          "value": "key_original script"
+        },
+        {
+          "type": "ALIAS",
+          "content": {
+            "type": "PATTERN",
+            "value": "[oO][rR][iI][gG][iI][nN][aA][lL]\\s+[tT][rR][aA][nN][sS][lL][aA][tT][iI][oO][nN]"
+          },
+          "named": true,
+          "value": "key_original translation"
+        },
+        {
+          "type": "ALIAS",
+          "content": {
+            "type": "PATTERN",
+            "value": "[oO][rR][iI][gG][iI][nN][aA][lL]\\s+[eE][dD][iI][tT][iI][nN][gG]"
+          },
+          "named": true,
+          "value": "key_original editing"
+        },
+        {
+          "type": "ALIAS",
+          "content": {
+            "type": "PATTERN",
+            "value": "[oO][rR][iI][gG][iI][nN][aA][lL]\\s+[tT][iI][mM][iI][nN][gG]"
+          },
+          "named": true,
+          "value": "key_original timing"
+        },
+        {
+          "type": "ALIAS",
+          "content": {
+            "type": "PATTERN",
+            "value": "[sS][yY][nN][cC][hH]\\s+[pP][oO][iI][nN][tT]"
+          },
+          "named": true,
+          "value": "key_synch point"
+        },
+        {
+          "type": "ALIAS",
+          "content": {
+            "type": "PATTERN",
+            "value": "[sS][cC][rR][iI][pP][tT]\\s+[uU][pP][dD][aA][tT][eE][dD]\\s+[bB][yY]"
+          },
+          "named": true,
+          "value": "key_script updated by"
+        },
+        {
+          "type": "ALIAS",
+          "content": {
+            "type": "PATTERN",
+            "value": "[uU][pP][dD][aA][tT][eE]\\s+[dD][eE][tT][aA][iI][lL][sS]"
+          },
+          "named": true,
+          "value": "key_update details"
+        },
+        {
+          "type": "ALIAS",
+          "content": {
+            "type": "PATTERN",
+            "value": "[cC][oO][lL][lL][iI][sS][iI][oO][nN][sS]"
+          },
+          "named": true,
+          "value": "key_collisions"
+        },
+        {
+          "type": "ALIAS",
+          "content": {
+            "type": "PATTERN",
+            "value": "[pP][lL][aA][yY][rR][eE][sS][yY]"
+          },
+          "named": true,
+          "value": "key_playresy"
+        },
+        {
+          "type": "ALIAS",
+          "content": {
+            "type": "PATTERN",
+            "value": "[pP][lL][aA][yY][rR][eE][sS][xX]"
+          },
+          "named": true,
+          "value": "key_playresx"
+        },
+        {
+          "type": "ALIAS",
+          "content": {
+            "type": "PATTERN",
+            "value": "[pP][lL][aA][yY][dD][eE][pP][tT][hH]"
+          },
+          "named": true,
+          "value": "key_playdepth"
+        },
+        {
+          "type": "ALIAS",
+          "content": {
+            "type": "PATTERN",
+            "value": "[tT][iI][mM][eE][rR]"
+          },
+          "named": true,
+          "value": "key_timer"
+        },
+        {
+          "type": "ALIAS",
+          "content": {
+            "type": "PATTERN",
+            "value": "[wW][rR][aA][pP][sS][tT][yY][lL][eE]"
+          },
+          "named": true,
+          "value": "key_wrapstyle"
+        },
+        {
+          "type": "ALIAS",
+          "content": {
+            "type": "PATTERN",
+            "value": "[sS][cC][aA][lL][eE][dD][bB][oO][rR][dD][eE][rR][aA][nN][dD][sS][hH][aA][dD][oO][wW]"
+          },
+          "named": true,
+          "value": "key_scaledborderandshadow"
+        },
+        {
+          "type": "ALIAS",
+          "content": {
+            "type": "PATTERN",
+            "value": "[yY][cC][bB][cC][rR]\\s+[mM][aA][tT][rR][iI][xX]"
+          },
+          "named": true,
+          "value": "key_ycbcr matrix"
+        },
+        {
+          "type": "ALIAS",
+          "content": {
+            "type": "PATTERN",
+            "value": "[fF][oO][rR][mM][aA][tT]"
+          },
+          "named": true,
+          "value": "key_format"
+        },
+        {
+          "type": "ALIAS",
+          "content": {
+            "type": "PATTERN",
+            "value": "[sS][tT][yY][lL][eE]"
+          },
+          "named": true,
+          "value": "key_style"
+        },
+        {
+          "type": "ALIAS",
+          "content": {
+            "type": "PATTERN",
+            "value": "[dD][iI][aA][lL][oO][gG][uU][eE]"
+          },
+          "named": true,
+          "value": "key_dialogue"
+        },
+        {
+          "type": "ALIAS",
+          "content": {
+            "type": "PATTERN",
+            "value": "[cC][oO][mM][mM][eE][nN][tT]"
+          },
+          "named": true,
+          "value": "key_comment"
+        },
+        {
+          "type": "ALIAS",
+          "content": {
+            "type": "PATTERN",
+            "value": "[pP][iI][cC][tT][uU][rR][eE]"
+          },
+          "named": true,
+          "value": "key_picture"
+        },
+        {
+          "type": "ALIAS",
+          "content": {
+            "type": "PATTERN",
+            "value": "[sS][oO][uU][nN][dD]"
+          },
+          "named": true,
+          "value": "key_sound"
+        },
+        {
+          "type": "ALIAS",
+          "content": {
+            "type": "PATTERN",
+            "value": "[mM][oO][vV][iI][eE]"
+          },
+          "named": true,
+          "value": "key_movie"
+        },
+        {
+          "type": "ALIAS",
+          "content": {
+            "type": "PATTERN",
+            "value": "[cC][oO][mM][mM][aA][nN][dD]"
+          },
+          "named": true,
+          "value": "key_command"
+        },
+        {
+          "type": "ALIAS",
+          "content": {
+            "type": "PATTERN",
+            "value": "[fF][oO][nN][tT][nN][aA][mM][eE]"
+          },
+          "named": true,
+          "value": "key_fontname"
+        },
+        {
+          "type": "ALIAS",
+          "content": {
+            "type": "PATTERN",
+            "value": "[fF][iI][lL][eE][nN][aA][mM][eE]"
+          },
+          "named": true,
+          "value": "key_filename"
+        },
+        {
+          "type": "PREC",
+          "value": -1,
+          "content": {
+            "type": "ALIAS",
+            "content": {
+              "type": "TOKEN",
+              "content": {
+                "type": "PATTERN",
+                "value": "[A-Za-z0-9 ]+"
+              }
+            },
+            "named": true,
+            "value": "key_custom"
+          }
+        }
+      ]
     },
     "value": {
       "type": "TOKEN",
@@ -118,6 +461,10 @@
     {
       "type": "PATTERN",
       "value": "\\s"
+    },
+    {
+      "type": "STRING",
+      "value": "﻿"
     }
   ],
   "conflicts": [],

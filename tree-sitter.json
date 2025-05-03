@@ -8,7 +8,8 @@
       "scope": "source.ass",
       "file-types": ["ass", "ssa"],
       "injection-regex": "^(ass|ssa)$",
-      "class-name": "TreeSitterAss"
+      "class-name": "TreeSitterAss",
+      "highlights": "queries/highlights.scm"
     }
   ],
   "metadata": {

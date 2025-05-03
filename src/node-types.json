@@ -1,5 +1,128 @@
 [
   {
+    "type": "key",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": false,
+      "required": true,
+      "types": [
+        {
+          "type": "key_collisions",
+          "named": true
+        },
+        {
+          "type": "key_command",
+          "named": true
+        },
+        {
+          "type": "key_comment",
+          "named": true
+        },
+        {
+          "type": "key_custom",
+          "named": true
+        },
+        {
+          "type": "key_dialogue",
+          "named": true
+        },
+        {
+          "type": "key_filename",
+          "named": true
+        },
+        {
+          "type": "key_fontname",
+          "named": true
+        },
+        {
+          "type": "key_format",
+          "named": true
+        },
+        {
+          "type": "key_movie",
+          "named": true
+        },
+        {
+          "type": "key_original editing",
+          "named": true
+        },
+        {
+          "type": "key_original script",
+          "named": true
+        },
+        {
+          "type": "key_original timing",
+          "named": true
+        },
+        {
+          "type": "key_original translation",
+          "named": true
+        },
+        {
+          "type": "key_picture",
+          "named": true
+        },
+        {
+          "type": "key_playdepth",
+          "named": true
+        },
+        {
+          "type": "key_playresx",
+          "named": true
+        },
+        {
+          "type": "key_playresy",
+          "named": true
+        },
+        {
+          "type": "key_scaledborderandshadow",
+          "named": true
+        },
+        {
+          "type": "key_script updated by",
+          "named": true
+        },
+        {
+          "type": "key_script_type",
+          "named": true
+        },
+        {
+          "type": "key_sound",
+          "named": true
+        },
+        {
+          "type": "key_style",
+          "named": true
+        },
+        {
+          "type": "key_synch point",
+          "named": true
+        },
+        {
+          "type": "key_timer",
+          "named": true
+        },
+        {
+          "type": "key_title",
+          "named": true
+        },
+        {
+          "type": "key_update details",
+          "named": true
+        },
+        {
+          "type": "key_wrapstyle",
+          "named": true
+        },
+        {
+          "type": "key_ycbcr matrix",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
     "type": "key_value_pair",
     "named": true,
     "fields": {},
@@ -57,13 +180,48 @@
     }
   },
   {
+    "type": "section_name",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": false,
+      "required": true,
+      "types": [
+        {
+          "type": "section_name_custom",
+          "named": true
+        },
+        {
+          "type": "section_name_events",
+          "named": true
+        },
+        {
+          "type": "section_name_fonts",
+          "named": true
+        },
+        {
+          "type": "section_name_graphics",
+          "named": true
+        },
+        {
+          "type": "section_name_script info",
+          "named": true
+        },
+        {
+          "type": "section_name_styles",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
     "type": "source_file",
     "named": true,
     "root": true,
     "fields": {},
     "children": {
       "multiple": true,
-      "required": true,
+      "required": false,
       "types": [
         {
           "type": "section",
@@ -89,11 +247,139 @@
     "named": true
   },
   {
-    "type": "key",
+    "type": "key_collisions",
     "named": true
   },
   {
-    "type": "section_name",
+    "type": "key_command",
+    "named": true
+  },
+  {
+    "type": "key_comment",
+    "named": true
+  },
+  {
+    "type": "key_custom",
+    "named": true
+  },
+  {
+    "type": "key_dialogue",
+    "named": true
+  },
+  {
+    "type": "key_filename",
+    "named": true
+  },
+  {
+    "type": "key_fontname",
+    "named": true
+  },
+  {
+    "type": "key_format",
+    "named": true
+  },
+  {
+    "type": "key_movie",
+    "named": true
+  },
+  {
+    "type": "key_original editing",
+    "named": true
+  },
+  {
+    "type": "key_original script",
+    "named": true
+  },
+  {
+    "type": "key_original timing",
+    "named": true
+  },
+  {
+    "type": "key_original translation",
+    "named": true
+  },
+  {
+    "type": "key_picture",
+    "named": true
+  },
+  {
+    "type": "key_playdepth",
+    "named": true
+  },
+  {
+    "type": "key_playresx",
+    "named": true
+  },
+  {
+    "type": "key_playresy",
+    "named": true
+  },
+  {
+    "type": "key_scaledborderandshadow",
+    "named": true
+  },
+  {
+    "type": "key_script updated by",
+    "named": true
+  },
+  {
+    "type": "key_script_type",
+    "named": true
+  },
+  {
+    "type": "key_sound",
+    "named": true
+  },
+  {
+    "type": "key_style",
+    "named": true
+  },
+  {
+    "type": "key_synch point",
+    "named": true
+  },
+  {
+    "type": "key_timer",
+    "named": true
+  },
+  {
+    "type": "key_title",
+    "named": true
+  },
+  {
+    "type": "key_update details",
+    "named": true
+  },
+  {
+    "type": "key_wrapstyle",
+    "named": true
+  },
+  {
+    "type": "key_ycbcr matrix",
+    "named": true
+  },
+  {
+    "type": "section_name_custom",
+    "named": true
+  },
+  {
+    "type": "section_name_events",
+    "named": true
+  },
+  {
+    "type": "section_name_fonts",
+    "named": true
+  },
+  {
+    "type": "section_name_graphics",
+    "named": true
+  },
+  {
+    "type": "section_name_script info",
+    "named": true
+  },
+  {
+    "type": "section_name_styles",
     "named": true
   },
   {
