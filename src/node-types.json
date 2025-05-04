@@ -283,282 +283,282 @@
           }
         ]
       },
-      "value_collisions": {
+      "values_collisions": {
         "multiple": false,
         "required": false,
         "types": [
           {
-            "type": "value_collisions",
+            "type": "values",
             "named": true
           }
         ]
       },
-      "value_command": {
+      "values_command": {
         "multiple": false,
         "required": false,
         "types": [
           {
-            "type": "value_command",
+            "type": "values",
             "named": true
           }
         ]
       },
-      "value_comment": {
+      "values_comment": {
         "multiple": false,
         "required": false,
         "types": [
           {
-            "type": "value_comment",
+            "type": "values",
             "named": true
           }
         ]
       },
-      "value_custom": {
+      "values_custom": {
         "multiple": false,
         "required": false,
         "types": [
           {
-            "type": "value_custom",
+            "type": "values",
             "named": true
           }
         ]
       },
-      "value_dialogue": {
+      "values_dialogue": {
         "multiple": false,
         "required": false,
         "types": [
           {
-            "type": "value_dialogue",
+            "type": "values",
             "named": true
           }
         ]
       },
-      "value_filename": {
+      "values_filename": {
         "multiple": false,
         "required": false,
         "types": [
           {
-            "type": "value_filename",
+            "type": "values",
             "named": true
           }
         ]
       },
-      "value_fontname": {
+      "values_fontname": {
         "multiple": false,
         "required": false,
         "types": [
           {
-            "type": "value_fontname",
+            "type": "values",
             "named": true
           }
         ]
       },
-      "value_format": {
+      "values_format": {
         "multiple": false,
         "required": false,
         "types": [
           {
-            "type": "value_format",
+            "type": "values",
             "named": true
           }
         ]
       },
-      "value_movie": {
+      "values_movie": {
         "multiple": false,
         "required": false,
         "types": [
           {
-            "type": "value_movie",
+            "type": "values",
             "named": true
           }
         ]
       },
-      "value_original_editing": {
+      "values_original_editing": {
         "multiple": false,
         "required": false,
         "types": [
           {
-            "type": "value_original_editing",
+            "type": "values",
             "named": true
           }
         ]
       },
-      "value_original_script": {
+      "values_original_script": {
         "multiple": false,
         "required": false,
         "types": [
           {
-            "type": "value_original_script",
+            "type": "values",
             "named": true
           }
         ]
       },
-      "value_original_timing": {
+      "values_original_timing": {
         "multiple": false,
         "required": false,
         "types": [
           {
-            "type": "value_original_timing",
+            "type": "values",
             "named": true
           }
         ]
       },
-      "value_original_translation": {
+      "values_original_translation": {
         "multiple": false,
         "required": false,
         "types": [
           {
-            "type": "value_original_translation",
+            "type": "values",
             "named": true
           }
         ]
       },
-      "value_picture": {
+      "values_picture": {
         "multiple": false,
         "required": false,
         "types": [
           {
-            "type": "value_picture",
+            "type": "values",
             "named": true
           }
         ]
       },
-      "value_playdepth": {
+      "values_playdepth": {
         "multiple": false,
         "required": false,
         "types": [
           {
-            "type": "value_playdepth",
+            "type": "values",
             "named": true
           }
         ]
       },
-      "value_playresx": {
+      "values_playresx": {
         "multiple": false,
         "required": false,
         "types": [
           {
-            "type": "value_playresx",
+            "type": "values",
             "named": true
           }
         ]
       },
-      "value_playresy": {
+      "values_playresy": {
         "multiple": false,
         "required": false,
         "types": [
           {
-            "type": "value_playresy",
+            "type": "values",
             "named": true
           }
         ]
       },
-      "value_scaledborderandshadow": {
+      "values_scaledborderandshadow": {
         "multiple": false,
         "required": false,
         "types": [
           {
-            "type": "value_scaledborderandshadow",
+            "type": "values",
             "named": true
           }
         ]
       },
-      "value_script_type": {
+      "values_script_type": {
         "multiple": false,
         "required": false,
         "types": [
           {
-            "type": "value_script_type",
+            "type": "values",
             "named": true
           }
         ]
       },
-      "value_script_updated_by": {
+      "values_script_updated_by": {
         "multiple": false,
         "required": false,
         "types": [
           {
-            "type": "value_script_updated_by",
+            "type": "values",
             "named": true
           }
         ]
       },
-      "value_sound": {
+      "values_sound": {
         "multiple": false,
         "required": false,
         "types": [
           {
-            "type": "value_sound",
+            "type": "values",
             "named": true
           }
         ]
       },
-      "value_style": {
+      "values_style": {
         "multiple": false,
         "required": false,
         "types": [
           {
-            "type": "value_style",
+            "type": "values",
             "named": true
           }
         ]
       },
-      "value_synch_point": {
+      "values_synch_point": {
         "multiple": false,
         "required": false,
         "types": [
           {
-            "type": "value_synch_point",
+            "type": "values",
             "named": true
           }
         ]
       },
-      "value_timer": {
+      "values_timer": {
         "multiple": false,
         "required": false,
         "types": [
           {
-            "type": "value_timer",
+            "type": "values",
             "named": true
           }
         ]
       },
-      "value_title": {
+      "values_title": {
         "multiple": false,
         "required": false,
         "types": [
           {
-            "type": "value_title",
+            "type": "values",
             "named": true
           }
         ]
       },
-      "value_update_details": {
+      "values_update_details": {
         "multiple": false,
         "required": false,
         "types": [
           {
-            "type": "value_update_details",
+            "type": "values",
             "named": true
           }
         ]
       },
-      "value_wrapstyle": {
+      "values_wrapstyle": {
         "multiple": false,
         "required": false,
         "types": [
           {
-            "type": "value_wrapstyle",
+            "type": "values",
             "named": true
           }
         ]
       },
-      "value_ycbcr_matrix": {
+      "values_ycbcr_matrix": {
         "multiple": false,
         "required": false,
         "types": [
           {
-            "type": "value_ycbcr_matrix",
+            "type": "values",
             "named": true
           }
         ]
@@ -671,72 +671,7 @@
     }
   },
   {
-    "type": "value_collisions",
-    "named": true,
-    "fields": {},
-    "children": {
-      "multiple": false,
-      "required": true,
-      "types": [
-        {
-          "type": "collisions_normal",
-          "named": true
-        },
-        {
-          "type": "collisions_reverse",
-          "named": true
-        }
-      ]
-    }
-  },
-  {
-    "type": "value_scaledborderandshadow",
-    "named": true,
-    "fields": {},
-    "children": {
-      "multiple": false,
-      "required": true,
-      "types": [
-        {
-          "type": "scaledborderandshadow_no",
-          "named": true
-        },
-        {
-          "type": "scaledborderandshadow_yes",
-          "named": true
-        }
-      ]
-    }
-  },
-  {
-    "type": "value_wrapstyle",
-    "named": true,
-    "fields": {},
-    "children": {
-      "multiple": false,
-      "required": true,
-      "types": [
-        {
-          "type": "wrapstyle_0",
-          "named": true
-        },
-        {
-          "type": "wrapstyle_1",
-          "named": true
-        },
-        {
-          "type": "wrapstyle_2",
-          "named": true
-        },
-        {
-          "type": "wrapstyle_3",
-          "named": true
-        }
-      ]
-    }
-  },
-  {
-    "type": "value_ycbcr_matrix",
+    "type": "values",
     "named": true,
     "fields": {},
     "children": {
@@ -744,68 +679,14 @@
       "required": true,
       "types": [
         {
-          "type": "ycbcr_matrix_color_space",
-          "named": true
-        },
-        {
-          "type": "ycbcr_matrix_none",
-          "named": true
-        },
-        {
-          "type": "ycbcr_matrix_range",
+          "type": "value",
           "named": true
         }
       ]
     }
   },
   {
-    "type": "ycbcr_matrix_color_space",
-    "named": true,
-    "fields": {},
-    "children": {
-      "multiple": false,
-      "required": true,
-      "types": [
-        {
-          "type": "ycbcr_matrix_color_space_240m",
-          "named": true
-        },
-        {
-          "type": "ycbcr_matrix_color_space_601",
-          "named": true
-        },
-        {
-          "type": "ycbcr_matrix_color_space_709",
-          "named": true
-        },
-        {
-          "type": "ycbcr_matrix_color_space_fcc",
-          "named": true
-        }
-      ]
-    }
-  },
-  {
-    "type": "ycbcr_matrix_range",
-    "named": true,
-    "fields": {},
-    "children": {
-      "multiple": false,
-      "required": true,
-      "types": [
-        {
-          "type": "ycbcr_matrix_range_pc",
-          "named": true
-        },
-        {
-          "type": "ycbcr_matrix_range_tv",
-          "named": true
-        }
-      ]
-    }
-  },
-  {
-    "type": ".",
+    "type": ",",
     "named": false
   },
   {
@@ -821,14 +702,6 @@
     "named": false
   },
   {
-    "type": "collisions_normal",
-    "named": true
-  },
-  {
-    "type": "collisions_reverse",
-    "named": true
-  },
-  {
     "type": "comment",
     "named": true
   },
@@ -837,155 +710,11 @@
     "named": true
   },
   {
-    "type": "scaledborderandshadow_no",
-    "named": true
-  },
-  {
-    "type": "scaledborderandshadow_yes",
-    "named": true
-  },
-  {
     "type": "section_name",
     "named": true
   },
   {
-    "type": "value_command",
-    "named": true
-  },
-  {
-    "type": "value_comment",
-    "named": true
-  },
-  {
-    "type": "value_custom",
-    "named": true
-  },
-  {
-    "type": "value_dialogue",
-    "named": true
-  },
-  {
-    "type": "value_filename",
-    "named": true
-  },
-  {
-    "type": "value_fontname",
-    "named": true
-  },
-  {
-    "type": "value_format",
-    "named": true
-  },
-  {
-    "type": "value_movie",
-    "named": true
-  },
-  {
-    "type": "value_original_editing",
-    "named": true
-  },
-  {
-    "type": "value_original_script",
-    "named": true
-  },
-  {
-    "type": "value_original_timing",
-    "named": true
-  },
-  {
-    "type": "value_original_translation",
-    "named": true
-  },
-  {
-    "type": "value_picture",
-    "named": true
-  },
-  {
-    "type": "value_playdepth",
-    "named": true
-  },
-  {
-    "type": "value_playresx",
-    "named": true
-  },
-  {
-    "type": "value_playresy",
-    "named": true
-  },
-  {
-    "type": "value_script_type",
-    "named": true
-  },
-  {
-    "type": "value_script_updated_by",
-    "named": true
-  },
-  {
-    "type": "value_sound",
-    "named": true
-  },
-  {
-    "type": "value_style",
-    "named": true
-  },
-  {
-    "type": "value_synch_point",
-    "named": true
-  },
-  {
-    "type": "value_timer",
-    "named": true
-  },
-  {
-    "type": "value_title",
-    "named": true
-  },
-  {
-    "type": "value_update_details",
-    "named": true
-  },
-  {
-    "type": "wrapstyle_0",
-    "named": true
-  },
-  {
-    "type": "wrapstyle_1",
-    "named": true
-  },
-  {
-    "type": "wrapstyle_2",
-    "named": true
-  },
-  {
-    "type": "wrapstyle_3",
-    "named": true
-  },
-  {
-    "type": "ycbcr_matrix_color_space_240m",
-    "named": true
-  },
-  {
-    "type": "ycbcr_matrix_color_space_601",
-    "named": true
-  },
-  {
-    "type": "ycbcr_matrix_color_space_709",
-    "named": true
-  },
-  {
-    "type": "ycbcr_matrix_color_space_fcc",
-    "named": true
-  },
-  {
-    "type": "ycbcr_matrix_none",
-    "named": true
-  },
-  {
-    "type": "ycbcr_matrix_range_pc",
-    "named": true
-  },
-  {
-    "type": "ycbcr_matrix_range_tv",
+    "type": "value",
     "named": true
   }
 ]

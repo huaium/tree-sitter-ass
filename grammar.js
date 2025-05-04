@@ -35,21 +35,6 @@ function caseInsensitive(word) {
 }
 
 /**
- * Generates rules with aliases for a given set of words.
- *
- * @param {GrammarSymbols<any>} $ - The grammar context.
- * @param {string[]} words - The list of words to create alias rules for.
- * @param {string} prefix - The prefix to prepend to each rule name.
- * @returns {Rule[]} - An array of alias rules where each word is mapped to a case-insensitive alias with the specified prefix.
- */
-function aliasRules($, words, prefix) {
-  // TODO: error processing
-  return words.map((word) =>
-    alias(caseInsensitive(word), $[`${prefix}_${word.toLowerCase()}`]),
-  );
-}
-
-/**
  * Generates rules for section headers, including legacy styles, custom sections,
  * and sections based on the provided words.
  *
@@ -64,7 +49,7 @@ function sectionRules($, words) {
   /**
    * @type {Rule[]}
    */
-  let rules = [];
+  const rules = [];
 
   // 1. For legacy `v4 Styles`
   rules.push(
@@ -114,8 +99,7 @@ function keyValueRules($, words) {
   /**
    * @type {Rule[]}
    */
-  let rules = [];
-  let value_token = token(/[^\r\n]+/);
+  const rules = [];
 
   // 1. For an ambiguous field `ScriptType` in `Script Info`
   rules.push(
@@ -128,35 +112,12 @@ function keyValueRules($, words) {
         ),
       ),
       ":",
-      field("value_script_type", alias(value_token, $.value_script_type)),
+      field("values_script_type", $.values),
     ),
   );
 
   // 2. For each words
   words.forEach((word) => {
-    /**
-     * @type {Rule}
-     */
-    let valueRule = alias(
-      value_token,
-      $[`value_${toLowerCaseUnderscored(word)}`],
-    );
-
-    switch (word) {
-      case "Collisions":
-        valueRule = $.value_collisions;
-        break;
-      case "WrapStyle":
-        valueRule = $.value_wrapstyle;
-        break;
-      case "ScaledBorderAndShadow":
-        valueRule = $.value_scaledborderandshadow;
-        break;
-      case "YCbCr Matrix":
-        valueRule = $.value_ycbcr_matrix;
-        break;
-    }
-
     rules.push(
       seq(
         field(
@@ -164,7 +125,7 @@ function keyValueRules($, words) {
           alias(caseInsensitive(word), $.key),
         ),
         ":",
-        field(`value_${toLowerCaseUnderscored(word)}`, valueRule),
+        field(`values_${toLowerCaseUnderscored(word)}`, $.values),
       ),
     );
   });
@@ -179,7 +140,7 @@ function keyValueRules($, words) {
       seq(
         field("key_custom", alias(token(/[A-Za-z0-9 ]+/), $.key)),
         ":",
-        field("value_custom", alias(value_token, $.value_custom)),
+        field("values_custom", $.values),
       ),
     ),
   );
@@ -260,35 +221,7 @@ module.exports = grammar({
           "filename",
         ]),
       ),
-
-    // Options for `Collisions` of `Script Info`
-    value_collisions: ($) =>
-      choice(...aliasRules($, ["normal", "reverse"], "collisions")),
-
-    // Options for `WrapStyle` of `Script Info`
-    value_wrapstyle: ($) =>
-      choice(...aliasRules($, ["0", "1", "2", "3"], "wrapstyle")),
-
-    // Options for `ScaledBorderAndShadow` of `Script Info`
-    value_scaledborderandshadow: ($) =>
-      choice(...aliasRules($, ["no", "yes"], "scaledborderandshadow")),
-
-    // Options for `YCbCr Matrix` of `Script Info`
-    value_ycbcr_matrix: ($) =>
-      choice(
-        seq($.ycbcr_matrix_range, ".", $.ycbcr_matrix_color_space),
-        $.ycbcr_matrix_none,
-      ),
-    ycbcr_matrix_none: ($) => caseInsensitive("None"),
-    ycbcr_matrix_range: ($) =>
-      choice(...aliasRules($, ["tv", "pc"], "ycbcr_matrix_range")),
-    ycbcr_matrix_color_space: ($) =>
-      choice(
-        ...aliasRules(
-          $,
-          ["601", "709", "240m", "fcc"],
-          "ycbcr_matrix_color_space",
-        ),
-      ),
+    values: ($) => seq($.value, repeat(seq(",", $.value))),
+    value: ($) => token(/[^,\r\n]*/),
   },
 });

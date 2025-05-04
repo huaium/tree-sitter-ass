@@ -1,6 +1,6 @@
 # tree-sitter-ass
 
-A tree-sitter parser for ass/ssa subtitles (WIP).
+A tree-sitter parser for ass/ssa subtitles.
 
 ## References
 
