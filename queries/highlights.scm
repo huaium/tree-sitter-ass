@@ -6,7 +6,5 @@
   "["
   "]"
 ] @punctuation.bracket
-[
-  ":"
-  ","
-] @operator
+"," @punctuation.delimiter
+":" @operator
