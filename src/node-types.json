@@ -1,144 +1,568 @@
 [
   {
-    "type": "key",
-    "named": true,
-    "fields": {},
-    "children": {
-      "multiple": false,
-      "required": true,
-      "types": [
-        {
-          "type": "key_collisions",
-          "named": true
-        },
-        {
-          "type": "key_command",
-          "named": true
-        },
-        {
-          "type": "key_comment",
-          "named": true
-        },
-        {
-          "type": "key_custom",
-          "named": true
-        },
-        {
-          "type": "key_dialogue",
-          "named": true
-        },
-        {
-          "type": "key_filename",
-          "named": true
-        },
-        {
-          "type": "key_fontname",
-          "named": true
-        },
-        {
-          "type": "key_format",
-          "named": true
-        },
-        {
-          "type": "key_movie",
-          "named": true
-        },
-        {
-          "type": "key_original editing",
-          "named": true
-        },
-        {
-          "type": "key_original script",
-          "named": true
-        },
-        {
-          "type": "key_original timing",
-          "named": true
-        },
-        {
-          "type": "key_original translation",
-          "named": true
-        },
-        {
-          "type": "key_picture",
-          "named": true
-        },
-        {
-          "type": "key_playdepth",
-          "named": true
-        },
-        {
-          "type": "key_playresx",
-          "named": true
-        },
-        {
-          "type": "key_playresy",
-          "named": true
-        },
-        {
-          "type": "key_scaledborderandshadow",
-          "named": true
-        },
-        {
-          "type": "key_script updated by",
-          "named": true
-        },
-        {
-          "type": "key_script_type",
-          "named": true
-        },
-        {
-          "type": "key_sound",
-          "named": true
-        },
-        {
-          "type": "key_style",
-          "named": true
-        },
-        {
-          "type": "key_synch point",
-          "named": true
-        },
-        {
-          "type": "key_timer",
-          "named": true
-        },
-        {
-          "type": "key_title",
-          "named": true
-        },
-        {
-          "type": "key_update details",
-          "named": true
-        },
-        {
-          "type": "key_wrapstyle",
-          "named": true
-        },
-        {
-          "type": "key_ycbcr matrix",
-          "named": true
-        }
-      ]
-    }
-  },
-  {
     "type": "key_value_pair",
     "named": true,
-    "fields": {},
-    "children": {
-      "multiple": true,
-      "required": true,
-      "types": [
-        {
-          "type": "key",
-          "named": true
-        },
-        {
-          "type": "value",
-          "named": true
-        }
-      ]
+    "fields": {
+      "key_collisions": {
+        "multiple": false,
+        "required": false,
+        "types": [
+          {
+            "type": "key",
+            "named": true
+          }
+        ]
+      },
+      "key_command": {
+        "multiple": false,
+        "required": false,
+        "types": [
+          {
+            "type": "key",
+            "named": true
+          }
+        ]
+      },
+      "key_comment": {
+        "multiple": false,
+        "required": false,
+        "types": [
+          {
+            "type": "key",
+            "named": true
+          }
+        ]
+      },
+      "key_custom": {
+        "multiple": false,
+        "required": false,
+        "types": [
+          {
+            "type": "key",
+            "named": true
+          }
+        ]
+      },
+      "key_dialogue": {
+        "multiple": false,
+        "required": false,
+        "types": [
+          {
+            "type": "key",
+            "named": true
+          }
+        ]
+      },
+      "key_filename": {
+        "multiple": false,
+        "required": false,
+        "types": [
+          {
+            "type": "key",
+            "named": true
+          }
+        ]
+      },
+      "key_fontname": {
+        "multiple": false,
+        "required": false,
+        "types": [
+          {
+            "type": "key",
+            "named": true
+          }
+        ]
+      },
+      "key_format": {
+        "multiple": false,
+        "required": false,
+        "types": [
+          {
+            "type": "key",
+            "named": true
+          }
+        ]
+      },
+      "key_movie": {
+        "multiple": false,
+        "required": false,
+        "types": [
+          {
+            "type": "key",
+            "named": true
+          }
+        ]
+      },
+      "key_original_editing": {
+        "multiple": false,
+        "required": false,
+        "types": [
+          {
+            "type": "key",
+            "named": true
+          }
+        ]
+      },
+      "key_original_script": {
+        "multiple": false,
+        "required": false,
+        "types": [
+          {
+            "type": "key",
+            "named": true
+          }
+        ]
+      },
+      "key_original_timing": {
+        "multiple": false,
+        "required": false,
+        "types": [
+          {
+            "type": "key",
+            "named": true
+          }
+        ]
+      },
+      "key_original_translation": {
+        "multiple": false,
+        "required": false,
+        "types": [
+          {
+            "type": "key",
+            "named": true
+          }
+        ]
+      },
+      "key_picture": {
+        "multiple": false,
+        "required": false,
+        "types": [
+          {
+            "type": "key",
+            "named": true
+          }
+        ]
+      },
+      "key_playdepth": {
+        "multiple": false,
+        "required": false,
+        "types": [
+          {
+            "type": "key",
+            "named": true
+          }
+        ]
+      },
+      "key_playresx": {
+        "multiple": false,
+        "required": false,
+        "types": [
+          {
+            "type": "key",
+            "named": true
+          }
+        ]
+      },
+      "key_playresy": {
+        "multiple": false,
+        "required": false,
+        "types": [
+          {
+            "type": "key",
+            "named": true
+          }
+        ]
+      },
+      "key_scaledborderandshadow": {
+        "multiple": false,
+        "required": false,
+        "types": [
+          {
+            "type": "key",
+            "named": true
+          }
+        ]
+      },
+      "key_script_type": {
+        "multiple": false,
+        "required": false,
+        "types": [
+          {
+            "type": "key",
+            "named": true
+          }
+        ]
+      },
+      "key_script_updated_by": {
+        "multiple": false,
+        "required": false,
+        "types": [
+          {
+            "type": "key",
+            "named": true
+          }
+        ]
+      },
+      "key_sound": {
+        "multiple": false,
+        "required": false,
+        "types": [
+          {
+            "type": "key",
+            "named": true
+          }
+        ]
+      },
+      "key_style": {
+        "multiple": false,
+        "required": false,
+        "types": [
+          {
+            "type": "key",
+            "named": true
+          }
+        ]
+      },
+      "key_synch_point": {
+        "multiple": false,
+        "required": false,
+        "types": [
+          {
+            "type": "key",
+            "named": true
+          }
+        ]
+      },
+      "key_timer": {
+        "multiple": false,
+        "required": false,
+        "types": [
+          {
+            "type": "key",
+            "named": true
+          }
+        ]
+      },
+      "key_title": {
+        "multiple": false,
+        "required": false,
+        "types": [
+          {
+            "type": "key",
+            "named": true
+          }
+        ]
+      },
+      "key_update_details": {
+        "multiple": false,
+        "required": false,
+        "types": [
+          {
+            "type": "key",
+            "named": true
+          }
+        ]
+      },
+      "key_wrapstyle": {
+        "multiple": false,
+        "required": false,
+        "types": [
+          {
+            "type": "key",
+            "named": true
+          }
+        ]
+      },
+      "key_ycbcr_matrix": {
+        "multiple": false,
+        "required": false,
+        "types": [
+          {
+            "type": "key",
+            "named": true
+          }
+        ]
+      },
+      "value_collisions": {
+        "multiple": false,
+        "required": false,
+        "types": [
+          {
+            "type": "value_collisions",
+            "named": true
+          }
+        ]
+      },
+      "value_command": {
+        "multiple": false,
+        "required": false,
+        "types": [
+          {
+            "type": "value_command",
+            "named": true
+          }
+        ]
+      },
+      "value_comment": {
+        "multiple": false,
+        "required": false,
+        "types": [
+          {
+            "type": "value_comment",
+            "named": true
+          }
+        ]
+      },
+      "value_custom": {
+        "multiple": false,
+        "required": false,
+        "types": [
+          {
+            "type": "value_custom",
+            "named": true
+          }
+        ]
+      },
+      "value_dialogue": {
+        "multiple": false,
+        "required": false,
+        "types": [
+          {
+            "type": "value_dialogue",
+            "named": true
+          }
+        ]
+      },
+      "value_filename": {
+        "multiple": false,
+        "required": false,
+        "types": [
+          {
+            "type": "value_filename",
+            "named": true
+          }
+        ]
+      },
+      "value_fontname": {
+        "multiple": false,
+        "required": false,
+        "types": [
+          {
+            "type": "value_fontname",
+            "named": true
+          }
+        ]
+      },
+      "value_format": {
+        "multiple": false,
+        "required": false,
+        "types": [
+          {
+            "type": "value_format",
+            "named": true
+          }
+        ]
+      },
+      "value_movie": {
+        "multiple": false,
+        "required": false,
+        "types": [
+          {
+            "type": "value_movie",
+            "named": true
+          }
+        ]
+      },
+      "value_original_editing": {
+        "multiple": false,
+        "required": false,
+        "types": [
+          {
+            "type": "value_original_editing",
+            "named": true
+          }
+        ]
+      },
+      "value_original_script": {
+        "multiple": false,
+        "required": false,
+        "types": [
+          {
+            "type": "value_original_script",
+            "named": true
+          }
+        ]
+      },
+      "value_original_timing": {
+        "multiple": false,
+        "required": false,
+        "types": [
+          {
+            "type": "value_original_timing",
+            "named": true
+          }
+        ]
+      },
+      "value_original_translation": {
+        "multiple": false,
+        "required": false,
+        "types": [
+          {
+            "type": "value_original_translation",
+            "named": true
+          }
+        ]
+      },
+      "value_picture": {
+        "multiple": false,
+        "required": false,
+        "types": [
+          {
+            "type": "value_picture",
+            "named": true
+          }
+        ]
+      },
+      "value_playdepth": {
+        "multiple": false,
+        "required": false,
+        "types": [
+          {
+            "type": "value_playdepth",
+            "named": true
+          }
+        ]
+      },
+      "value_playresx": {
+        "multiple": false,
+        "required": false,
+        "types": [
+          {
+            "type": "value_playresx",
+            "named": true
+          }
+        ]
+      },
+      "value_playresy": {
+        "multiple": false,
+        "required": false,
+        "types": [
+          {
+            "type": "value_playresy",
+            "named": true
+          }
+        ]
+      },
+      "value_scaledborderandshadow": {
+        "multiple": false,
+        "required": false,
+        "types": [
+          {
+            "type": "value_scaledborderandshadow",
+            "named": true
+          }
+        ]
+      },
+      "value_script_type": {
+        "multiple": false,
+        "required": false,
+        "types": [
+          {
+            "type": "value_script_type",
+            "named": true
+          }
+        ]
+      },
+      "value_script_updated_by": {
+        "multiple": false,
+        "required": false,
+        "types": [
+          {
+            "type": "value_script_updated_by",
+            "named": true
+          }
+        ]
+      },
+      "value_sound": {
+        "multiple": false,
+        "required": false,
+        "types": [
+          {
+            "type": "value_sound",
+            "named": true
+          }
+        ]
+      },
+      "value_style": {
+        "multiple": false,
+        "required": false,
+        "types": [
+          {
+            "type": "value_style",
+            "named": true
+          }
+        ]
+      },
+      "value_synch_point": {
+        "multiple": false,
+        "required": false,
+        "types": [
+          {
+            "type": "value_synch_point",
+            "named": true
+          }
+        ]
+      },
+      "value_timer": {
+        "multiple": false,
+        "required": false,
+        "types": [
+          {
+            "type": "value_timer",
+            "named": true
+          }
+        ]
+      },
+      "value_title": {
+        "multiple": false,
+        "required": false,
+        "types": [
+          {
+            "type": "value_title",
+            "named": true
+          }
+        ]
+      },
+      "value_update_details": {
+        "multiple": false,
+        "required": false,
+        "types": [
+          {
+            "type": "value_update_details",
+            "named": true
+          }
+        ]
+      },
+      "value_wrapstyle": {
+        "multiple": false,
+        "required": false,
+        "types": [
+          {
+            "type": "value_wrapstyle",
+            "named": true
+          }
+        ]
+      },
+      "value_ycbcr_matrix": {
+        "multiple": false,
+        "required": false,
+        "types": [
+          {
+            "type": "value_ycbcr_matrix",
+            "named": true
+          }
+        ]
+      }
     }
   },
   {
@@ -167,51 +591,67 @@
   {
     "type": "section_header",
     "named": true,
-    "fields": {},
-    "children": {
-      "multiple": false,
-      "required": true,
-      "types": [
-        {
-          "type": "section_name",
-          "named": true
-        }
-      ]
-    }
-  },
-  {
-    "type": "section_name",
-    "named": true,
-    "fields": {},
-    "children": {
-      "multiple": false,
-      "required": true,
-      "types": [
-        {
-          "type": "section_name_custom",
-          "named": true
-        },
-        {
-          "type": "section_name_events",
-          "named": true
-        },
-        {
-          "type": "section_name_fonts",
-          "named": true
-        },
-        {
-          "type": "section_name_graphics",
-          "named": true
-        },
-        {
-          "type": "section_name_script info",
-          "named": true
-        },
-        {
-          "type": "section_name_styles",
-          "named": true
-        }
-      ]
+    "fields": {
+      "section_name_custom": {
+        "multiple": false,
+        "required": false,
+        "types": [
+          {
+            "type": "section_name",
+            "named": true
+          }
+        ]
+      },
+      "section_name_events": {
+        "multiple": false,
+        "required": false,
+        "types": [
+          {
+            "type": "section_name",
+            "named": true
+          }
+        ]
+      },
+      "section_name_fonts": {
+        "multiple": false,
+        "required": false,
+        "types": [
+          {
+            "type": "section_name",
+            "named": true
+          }
+        ]
+      },
+      "section_name_graphics": {
+        "multiple": false,
+        "required": false,
+        "types": [
+          {
+            "type": "section_name",
+            "named": true
+          }
+        ]
+      },
+      "section_name_script_info": {
+        "multiple": false,
+        "required": false,
+        "types": [
+          {
+            "type": "section_name",
+            "named": true
+          }
+        ]
+      },
+      "section_name_styles": {
+        "multiple": false,
+        "required": false,
+        "types": [
+          {
+            "type": "section_name",
+            "named": true
+          }
+        ]
+      }
     }
   },
   {
@@ -231,6 +671,144 @@
     }
   },
   {
+    "type": "value_collisions",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": false,
+      "required": true,
+      "types": [
+        {
+          "type": "collisions_normal",
+          "named": true
+        },
+        {
+          "type": "collisions_reverse",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "value_scaledborderandshadow",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": false,
+      "required": true,
+      "types": [
+        {
+          "type": "scaledborderandshadow_no",
+          "named": true
+        },
+        {
+          "type": "scaledborderandshadow_yes",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "value_wrapstyle",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": false,
+      "required": true,
+      "types": [
+        {
+          "type": "wrapstyle_0",
+          "named": true
+        },
+        {
+          "type": "wrapstyle_1",
+          "named": true
+        },
+        {
+          "type": "wrapstyle_2",
+          "named": true
+        },
+        {
+          "type": "wrapstyle_3",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "value_ycbcr_matrix",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": true,
+      "required": true,
+      "types": [
+        {
+          "type": "ycbcr_matrix_color_space",
+          "named": true
+        },
+        {
+          "type": "ycbcr_matrix_none",
+          "named": true
+        },
+        {
+          "type": "ycbcr_matrix_range",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "ycbcr_matrix_color_space",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": false,
+      "required": true,
+      "types": [
+        {
+          "type": "ycbcr_matrix_color_space_240m",
+          "named": true
+        },
+        {
+          "type": "ycbcr_matrix_color_space_601",
+          "named": true
+        },
+        {
+          "type": "ycbcr_matrix_color_space_709",
+          "named": true
+        },
+        {
+          "type": "ycbcr_matrix_color_space_fcc",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "ycbcr_matrix_range",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": false,
+      "required": true,
+      "types": [
+        {
+          "type": "ycbcr_matrix_range_pc",
+          "named": true
+        },
+        {
+          "type": "ycbcr_matrix_range_tv",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": ".",
+    "named": false
+  },
+  {
     "type": ":",
     "named": false
   },
@@ -243,147 +821,171 @@
     "named": false
   },
   {
+    "type": "collisions_normal",
+    "named": true
+  },
+  {
+    "type": "collisions_reverse",
+    "named": true
+  },
+  {
     "type": "comment",
     "named": true
   },
   {
-    "type": "key_collisions",
+    "type": "key",
     "named": true
   },
   {
-    "type": "key_command",
+    "type": "scaledborderandshadow_no",
     "named": true
   },
   {
-    "type": "key_comment",
+    "type": "scaledborderandshadow_yes",
     "named": true
   },
   {
-    "type": "key_custom",
+    "type": "section_name",
     "named": true
   },
   {
-    "type": "key_dialogue",
+    "type": "value_command",
     "named": true
   },
   {
-    "type": "key_filename",
+    "type": "value_comment",
     "named": true
   },
   {
-    "type": "key_fontname",
+    "type": "value_custom",
     "named": true
   },
   {
-    "type": "key_format",
+    "type": "value_dialogue",
     "named": true
   },
   {
-    "type": "key_movie",
+    "type": "value_filename",
     "named": true
   },
   {
-    "type": "key_original editing",
+    "type": "value_fontname",
     "named": true
   },
   {
-    "type": "key_original script",
+    "type": "value_format",
     "named": true
   },
   {
-    "type": "key_original timing",
+    "type": "value_movie",
     "named": true
   },
   {
-    "type": "key_original translation",
+    "type": "value_original_editing",
     "named": true
   },
   {
-    "type": "key_picture",
+    "type": "value_original_script",
     "named": true
   },
   {
-    "type": "key_playdepth",
+    "type": "value_original_timing",
     "named": true
   },
   {
-    "type": "key_playresx",
+    "type": "value_original_translation",
     "named": true
   },
   {
-    "type": "key_playresy",
+    "type": "value_picture",
     "named": true
   },
   {
-    "type": "key_scaledborderandshadow",
+    "type": "value_playdepth",
     "named": true
   },
   {
-    "type": "key_script updated by",
+    "type": "value_playresx",
     "named": true
   },
   {
-    "type": "key_script_type",
+    "type": "value_playresy",
     "named": true
   },
   {
-    "type": "key_sound",
+    "type": "value_script_type",
     "named": true
   },
   {
-    "type": "key_style",
+    "type": "value_script_updated_by",
     "named": true
   },
   {
-    "type": "key_synch point",
+    "type": "value_sound",
     "named": true
   },
   {
-    "type": "key_timer",
+    "type": "value_style",
     "named": true
   },
   {
-    "type": "key_title",
+    "type": "value_synch_point",
     "named": true
   },
   {
-    "type": "key_update details",
+    "type": "value_timer",
     "named": true
   },
   {
-    "type": "key_wrapstyle",
+    "type": "value_title",
     "named": true
   },
   {
-    "type": "key_ycbcr matrix",
+    "type": "value_update_details",
     "named": true
   },
   {
-    "type": "section_name_custom",
+    "type": "wrapstyle_0",
     "named": true
   },
   {
-    "type": "section_name_events",
+    "type": "wrapstyle_1",
     "named": true
   },
   {
-    "type": "section_name_fonts",
+    "type": "wrapstyle_2",
     "named": true
   },
   {
-    "type": "section_name_graphics",
+    "type": "wrapstyle_3",
     "named": true
   },
   {
-    "type": "section_name_script info",
+    "type": "ycbcr_matrix_color_space_240m",
     "named": true
   },
   {
-    "type": "section_name_styles",
+    "type": "ycbcr_matrix_color_space_601",
     "named": true
   },
   {
-    "type": "value",
+    "type": "ycbcr_matrix_color_space_709",
+    "named": true
+  },
+  {
+    "type": "ycbcr_matrix_color_space_fcc",
+    "named": true
+  },
+  {
+    "type": "ycbcr_matrix_none",
+    "named": true
+  },
+  {
+    "type": "ycbcr_matrix_range_pc",
+    "named": true
+  },
+  {
+    "type": "ycbcr_matrix_range_tv",
     "named": true
   }
 ]
