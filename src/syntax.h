@@ -144,7 +144,7 @@ static bool ass_syntax_tokens_valid(const bool *valid) {
     valid[DRAWING_MODE_TAG] || valid[CLIP_NAME] || valid[CLIP_END] ||
     valid[TRANSFORM_START] || valid[TRANSFORM_END] || valid[DRAW_MOVE] ||
     valid[DRAW_MOVE_OPEN] || valid[DRAW_LINE] || valid[DRAW_BEZIER] || valid[DRAW_SPLINE] ||
-    valid[DRAW_EXTEND] || valid[DRAW_CLOSE] || valid[UNKNOWN_TAG_NAME] || valid[IGNORED_BACKSLASH];
+    valid[DRAW_EXTEND] || valid[DRAW_CLOSE] || valid[UNKNOWN_TAG_NAME] || valid[IGNORED_BACKSLASH] || valid[TAG_STRING];
 }
 
 static bool ass_tag_letter(int32_t c) {
@@ -317,6 +317,20 @@ static bool ass_scan_syntax(AssSyntax *syntax, TSLexer *lexer, const bool *valid
     return true;
   }
   if (syntax->in_override) {
+    if (valid[TAG_STRING]) {
+      bool content = false;
+      while (!lexer->eof(lexer) && lexer->lookahead != '\r' && lexer->lookahead != '\n' &&
+             lexer->lookahead != '\\' && lexer->lookahead != '}' &&
+             !(syntax->transform_depth > 0 && lexer->lookahead == ')')) {
+        lexer->advance(lexer, false);
+        content = true;
+      }
+      if (content) {
+        lexer->mark_end(lexer);
+        lexer->result_symbol = TAG_STRING;
+        return true;
+      }
+    }
     while (ass_horizontal_space(lexer->lookahead)) lexer->advance(lexer, true);
     if (valid[IGNORED_BACKSLASH] && lexer->lookahead == '\\') {
       lexer->advance(lexer, false);

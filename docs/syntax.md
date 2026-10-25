@@ -52,6 +52,10 @@ Override blocks contain `numeric_tag`, `color_tag`, `alpha_tag`, `font_tag`,
 available through the `name` field and a `tag_name` child. Numeric arguments,
 colors, font names, timing arguments, and nested tags remain separate children.
 Unknown parenthesized arguments remain structured in `unknown_tag_arguments`.
+Their contents are preserved as opaque text and nested parentheses; tag-like
+text inside them does not change drawing mode or other active scanner state.
+Font and reset strings inside transforms stop before the enclosing closing
+parenthesis. Outside transforms, parentheses remain part of those strings.
 Unknown names with standard-tag prefixes remain unknown tags; a bare backslash
 inside an override block is preserved as `override_comment`. Ignored text inside
 transforms also uses `override_comment` nodes.

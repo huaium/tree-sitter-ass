@@ -3264,13 +3264,6 @@
         }
       ]
     },
-    "tag_string": {
-      "type": "IMMEDIATE_TOKEN",
-      "content": {
-        "type": "PATTERN",
-        "value": "[^\\\\}\\r\\n]+"
-      }
-    },
     "position_tag": {
       "type": "SEQ",
       "members": [
@@ -4036,16 +4029,12 @@
                 "type": "TOKEN",
                 "content": {
                   "type": "PATTERN",
-                  "value": "[^()\\\\}\\r\\n]+"
+                  "value": "[^()}\\r\\n]+"
                 }
               },
               {
                 "type": "SYMBOL",
                 "name": "unknown_tag_arguments"
-              },
-              {
-                "type": "SYMBOL",
-                "name": "_override_tag"
               }
             ]
           }
@@ -4440,6 +4429,10 @@
     {
       "type": "SYMBOL",
       "name": "_ignored_backslash"
+    },
+    {
+      "type": "SYMBOL",
+      "name": "tag_string"
     },
     {
       "type": "SYMBOL",

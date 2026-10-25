@@ -20,10 +20,10 @@ comprehensive specification that resolves every renderer's behavior.
 | Complex tags | Position/origin, both movement forms, both fade forms, all four transform signatures, every documented animatable tag inside each transform signature |
 | Clipping | Rectangle/inverse rectangle, vector/inverse vector, optional drawing scale, rectangular clips inside transforms |
 | Drawing | m, n, l, b, s, p, c; repeated point groups, negative coordinates, whitespace before blocks and line endings, drawing-mode changes across blocks and event boundaries |
-| Ignored content | Bare backslashes in override blocks, unknown tag prefixes and numbered names, comments inside transforms |
+| Ignored content | Bare backslashes in override blocks, unknown tag prefixes and numbered names, comments inside transforms, opaque nested unknown arguments that do not change drawing mode |
 | Effects | Banner, Scroll up/down, optional parameters, unknown effect strings |
 | Attachments | Multiple font/graphics declarations, encoded lines resembling sections or comments |
-| Editing | Incremental edits to formats, sections, drawing mode, Unicode, comment/dialogue record type, and literal/override brace boundaries; recovery after malformed records |
+| Editing | Incremental edits to formats, sections, drawing mode, unknown arguments, Unicode, comment/dialogue record type, and literal/override brace boundaries; recovery after malformed records |
 
 `bindings/node/compatibility_test.js` contains the reference-oriented matrix;
 the other Node tests and checked-in samples cover fields, attachments, errors,
@@ -33,6 +33,8 @@ generated parser through their binding APIs.
 The parser produces syntax trees. It does not render subtitles, decode embedded
 attachments, resolve fonts/styles, or validate visual constraints such as valid
 alignment ranges, mutually exclusive positioning tags, or animatable properties.
+Font and reset tags inside transforms therefore retain their syntax nodes even
+though those properties are not animatable.
 Legacy file encodings must be converted to Unicode by the caller before parsing.
 
 The [libass extension reference](https://github.com/libass/libass/wiki/Libass%27-ASS-Extensions)

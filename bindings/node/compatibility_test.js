@@ -204,3 +204,64 @@ test("incremental changes between comments and dialogue restore scanner modes", 
     assert.equal(result.rootNode.descendantsOfType("numeric_tag").length, to === "Dialogue:" ? 1 : 0);
   }
 });
+
+test("unknown arguments preserve nested syntax without changing drawing state", () => {
+  for (const argumentsText of ["\\p1", "(\\p1)", "\\t(0,500,\\p1)", "\\clip(m 0 0 l 10 10)",
+    "\\fnArial\\rDefault", "1,(2,\\p1),3"]) {
+    const root = parse(event(`{\\zzunknown(${argumentsText})}Visible text`));
+    const unknown = root.descendantsOfType("unknown_tag")[0];
+    assert.equal(unknown.lastNamedChild.text, `(${argumentsText})`);
+    assert.equal(unknown.descendantsOfType("drawing_mode_tag").length, 0);
+    assert.equal(unknown.descendantsOfType("transform_tag").length, 0);
+    assert.equal(root.descendantsOfType("text").at(-1).text, "Visible text");
+    assert.equal(root.descendantsOfType("drawing_command").length, 0);
+  }
+  const drawing = parse(event("{\\p1}m 0 0{\\zzunknown(\\p0)}l 10 10{\\p0}Text"));
+  assert.equal(drawing.descendantsOfType("drawing_line").length, 1);
+  assert.equal(drawing.descendantsOfType("drawing_mode_tag").length, 2);
+  assert.equal(drawing.descendantsOfType("text").at(-1).text, "Text");
+  const transformed = parse(event("{\\t(0,500,\\zzunknown(\\p1)\\fs30)\\p1}m 0 0{\\p0}Text"));
+  assert.equal(transformed.descendantsOfType("transform_tag").length, 1);
+  assert.equal(transformed.descendantsOfType("drawing_move").length, 1);
+});
+
+test("font and reset arguments stop at their enclosing transform boundary", () => {
+  for (const [tag, type, field, value] of [
+    ["fnArial", "font_tag", "font", "Arial"],
+    ["fnTimes New Roman", "font_tag", "font", "Times New Roman"],
+    ["rDefault", "reset_tag", "style", "Default"],
+  ]) {
+    for (const timing of ["", "2,", "0,500,", "0,500,0.5,"]) {
+      const root = parse(event(`{\\t(${timing}\\${tag})\\b1}Text`));
+      assert.equal(root.descendantsOfType(type)[0].childForFieldName(field).text, value);
+      assert.equal(root.descendantsOfType("transform_tag").length, 1);
+      assert.equal(root.descendantsOfType("numeric_tag").length, 1);
+    }
+  }
+  for (const tag of ["fn", "r"]) {
+    parse(event(`{\\t(\\${tag})}Text`));
+  }
+  const nested = parse(event("{\\t(0,500,\\t(\\fnArial)\\rDefault)\\fnExample (Regular)}Text"));
+  assert.equal(nested.descendantsOfType("transform_tag").length, 2);
+  assert.deepEqual(nested.descendantsOfType("font_tag").map((node) => node.childForFieldName("font").text),
+    ["Arial", "Example (Regular)"]);
+  assert.equal(nested.descendantsOfType("reset_tag")[0].childForFieldName("style").text, "Default");
+});
+
+test("incremental edits across unknown arguments preserve active drawing state", () => {
+  const parser = new Parser();
+  parser.setLanguage(language);
+  const before = event("{\\zzunknown(\\p0)}m 0 0");
+  const offset = before.indexOf("p0") + 1;
+  const lines = before.slice(0, offset).split("\n");
+  const position = { row: lines.length - 1, column: lines.at(-1).length };
+  const tree = parser.parse(before);
+  tree.edit({ startIndex: offset, oldEndIndex: offset + 1, newEndIndex: offset + 1,
+    startPosition: position, oldEndPosition: { ...position, column: position.column + 1 },
+    newEndPosition: { ...position, column: position.column + 1 } });
+  const after = before.replace("p0", "p1");
+  const result = parser.parse(after, tree);
+  assert.equal(result.rootNode.hasError, false);
+  assert.equal(result.rootNode.toString(), parser.parse(after).rootNode.toString());
+  assert.equal(result.rootNode.descendantsOfType("drawing_command").length, 0);
+});

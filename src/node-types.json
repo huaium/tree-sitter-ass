@@ -1405,54 +1405,6 @@
       "required": false,
       "types": [
         {
-          "type": "alpha_tag",
-          "named": true
-        },
-        {
-          "type": "clip_tag",
-          "named": true
-        },
-        {
-          "type": "color_tag",
-          "named": true
-        },
-        {
-          "type": "drawing_mode_tag",
-          "named": true
-        },
-        {
-          "type": "fade_tag",
-          "named": true
-        },
-        {
-          "type": "font_tag",
-          "named": true
-        },
-        {
-          "type": "move_tag",
-          "named": true
-        },
-        {
-          "type": "numeric_tag",
-          "named": true
-        },
-        {
-          "type": "position_tag",
-          "named": true
-        },
-        {
-          "type": "reset_tag",
-          "named": true
-        },
-        {
-          "type": "transform_tag",
-          "named": true
-        },
-        {
-          "type": "unknown_tag",
-          "named": true
-        },
-        {
           "type": "unknown_tag_arguments",
           "named": true
         }
