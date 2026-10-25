@@ -80,7 +80,7 @@ jobs:
         run: uvx cibuildwheel==3.2.1 --output-dir dist
         env:
           CIBW_ARCHS: auto64
-          CIBW_TEST_REQUIRES: tree-sitter>=0.26,<0.27
+          CIBW_TEST_EXTRAS: core
           CIBW_TEST_COMMAND: python -m unittest discover -s "{project}/bindings/python/tests" -v
       - uses: actions/upload-artifact@v7
         with:
