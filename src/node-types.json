@@ -1609,6 +1609,16 @@
           }
         ]
       },
+      "margin_b": {
+        "multiple": false,
+        "required": false,
+        "types": [
+          {
+            "type": "integer",
+            "named": true
+          }
+        ]
+      },
       "margin_l": {
         "multiple": false,
         "required": false,
@@ -1620,6 +1630,16 @@
         ]
       },
       "margin_r": {
+        "multiple": false,
+        "required": false,
+        "types": [
+          {
+            "type": "integer",
+            "named": true
+          }
+        ]
+      },
+      "margin_t": {
         "multiple": false,
         "required": false,
         "types": [
@@ -1675,6 +1695,16 @@
         "types": [
           {
             "type": "color",
+            "named": true
+          }
+        ]
+      },
+      "relative_to": {
+        "multiple": false,
+        "required": false,
+        "types": [
+          {
+            "type": "integer",
             "named": true
           }
         ]

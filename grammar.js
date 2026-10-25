@@ -162,7 +162,8 @@ const typedFields = {
   italic: "integer", underline: "integer", strikeout: "integer", scale_x: "number",
   scale_y: "number", spacing: "number", angle: "number", border_style: "integer",
   outline: "number", shadow: "number", alignment: "integer", alpha_level: "integer",
-  encoding: "integer", unknown: "field_string",
+  encoding: "integer", margin_t: "integer", margin_b: "integer", relative_to: "integer",
+  unknown: "field_string",
 };
 
 function tagName($, names) {
@@ -363,7 +364,7 @@ module.exports = grammar({
       $.position_tag, $.move_tag, $.fade_tag, $.transform_tag, $.clip_tag, $.drawing_mode_tag, $.unknown_tag),
     numeric_tag: ($) => seq("\\", field("name", tagName($, [
       "b", "i", "u", "s", "bord", "xbord", "ybord", "shad", "xshad", "yshad",
-      "be", "blur", "fs", "fscx", "fscy", "fsp", "fr", "frx", "fry", "frz",
+      "be", "blur", "fs", "fscx", "fscy", "fsc", "fsp", "fr", "frx", "fry", "frz",
       "fax", "fay", "fe", "a", "an", "q", "k", "K", "kf", "ko", "kt", "pbo",
     ])), optional(field("argument", $.number))),
     color_tag: ($) => seq("\\", field("name", tagName($, ["c", "1c", "2c", "3c", "4c"])), optional($.override_color)),

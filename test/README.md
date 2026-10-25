@@ -6,6 +6,7 @@ parses each sample and checks representative syntax nodes.
   every drawing command, custom metadata, and attachment syntax.
 - `script_info_only.ass`: a minimal metadata-only document.
 - `legacy.ssa`: SSA styles, decimal colors, marked events, and legacy record types.
+- `ass2.ass`: ASS v4++ fixed layouts, separate top/bottom margins, and `RelativeTo`.
 - `custom_formats.ass`: reordered fields, unknown columns, empty values, and
   changes to the active event format.
 

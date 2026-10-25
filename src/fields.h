@@ -7,7 +7,8 @@
   X(font_size) X(primary_colour) X(secondary_colour) X(tertiary_colour) \
   X(outline_colour) X(back_colour) X(bold) X(italic) X(underline) X(strikeout) \
   X(scale_x) X(scale_y) X(spacing) X(angle) X(border_style) X(outline) \
-  X(shadow) X(alignment) X(alpha_level) X(encoding) X(unknown)
+  X(shadow) X(alignment) X(alpha_level) X(encoding) \
+  X(margin_t) X(margin_b) X(relative_to) X(unknown)
 
 #define ASS_FIELD_ENUM(name) FIELD_##name,
 enum AssField { ASS_FIELDS(ASS_FIELD_ENUM) ASS_FIELD_COUNT };

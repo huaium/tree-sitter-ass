@@ -2366,6 +2366,81 @@
           "members": [
             {
               "type": "SYMBOL",
+              "name": "_field_margin_t"
+            },
+            {
+              "type": "CHOICE",
+              "members": [
+                {
+                  "type": "FIELD",
+                  "name": "margin_t",
+                  "content": {
+                    "type": "SYMBOL",
+                    "name": "integer"
+                  }
+                },
+                {
+                  "type": "BLANK"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "SEQ",
+          "members": [
+            {
+              "type": "SYMBOL",
+              "name": "_field_margin_b"
+            },
+            {
+              "type": "CHOICE",
+              "members": [
+                {
+                  "type": "FIELD",
+                  "name": "margin_b",
+                  "content": {
+                    "type": "SYMBOL",
+                    "name": "integer"
+                  }
+                },
+                {
+                  "type": "BLANK"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "SEQ",
+          "members": [
+            {
+              "type": "SYMBOL",
+              "name": "_field_relative_to"
+            },
+            {
+              "type": "CHOICE",
+              "members": [
+                {
+                  "type": "FIELD",
+                  "name": "relative_to",
+                  "content": {
+                    "type": "SYMBOL",
+                    "name": "integer"
+                  }
+                },
+                {
+                  "type": "BLANK"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "SEQ",
+          "members": [
+            {
+              "type": "SYMBOL",
               "name": "_field_unknown"
             },
             {
@@ -2856,6 +2931,10 @@
                     {
                       "type": "STRING",
                       "value": "fscy"
+                    },
+                    {
+                      "type": "STRING",
+                      "value": "fsc"
                     },
                     {
                       "type": "STRING",
@@ -4445,6 +4524,18 @@
     {
       "type": "SYMBOL",
       "name": "_field_encoding"
+    },
+    {
+      "type": "SYMBOL",
+      "name": "_field_margin_t"
+    },
+    {
+      "type": "SYMBOL",
+      "name": "_field_margin_b"
+    },
+    {
+      "type": "SYMBOL",
+      "name": "_field_relative_to"
     },
     {
       "type": "SYMBOL",

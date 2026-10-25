@@ -1,0 +1,14 @@
+[Script Info]
+; ASS v4++ uses fixed layouts, without Format lines.
+Title: Observatory ASS2 Layout
+ScriptType: v4.00++
+PlayResX: 1920
+PlayResY: 1080
+
+[V4++ Styles]
+Style:Default,Arial,48,&H00FFFFFF,&H000000FF,&H00202020,&H80000000,0,0,0,0,100,100,0,0,1,2,1,2,60,60,40,50,1,0
+Style:Sign,Arial,36,&H0000FFFF,&H000000FF,&H00000000,&H80000000,-1,0,0,0,100,100,0,0,1,2,0,8,20,20,30,40,1,1
+
+[Events]
+Dialogue:0,0:00:01.00,0:00:04.00,Default,Guide,0,0,0,0,,Welcome, visitors.
+Dialogue:1,0:00:04.00,0:00:07.00,Sign,,20,20,30,40,,{\kt0\k100}OBSERVATORY

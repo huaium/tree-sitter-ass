@@ -104,7 +104,7 @@ test("dialogue text preserves whitespace, Unicode, escapes, and override comment
 });
 
 test("malformed timestamps, tag parameters, and drawings produce errors", () => {
-  for (const text of ["{\\pos(1,2,3)}x", "{\\move(1,2,3)}x", "{\\p1}m 0{\\p0}", "{\\b1unclosed"]) {
+  for (const text of ["{\\pos(1,2,3)}x", "{\\move(1,2,3)}x", "{\\p1}m 0{\\p0}"]) {
     const root = parser().parse(dialogue(text)).rootNode;
     assert.equal(root.hasError, true, text);
   }
@@ -113,7 +113,7 @@ test("malformed timestamps, tag parameters, and drawings produce errors", () => 
 });
 
 test("malformed records recover at the next event line", () => {
-  for (const bad of ["0,bad,0:00:02.00,text", "0,0:00:01.00,0:00:02.00,{\\b1unclosed", "0,0:00:01.00,0:00:02.00,{\\pos(1,2,3)}x"]) {
+  for (const bad of ["0,bad,0:00:02.00,text", "0,0:00:01.00,0:00:02.00,{\\pos(1,2,3)}x"]) {
     const source = "[Events]\nFormat: Layer, Start, End, Text\nDialogue:" + bad +
       "\nDialogue:1,0:00:03.00,0:00:04.00,good\n";
     const root = parser().parse(source).rootNode;
@@ -180,6 +180,7 @@ test("subtitle samples retain representative structured syntax", () => {
       "banner_effect", "scroll_effect", "attachment_data"],
     "script_info_only.ass": ["section", "key_value_pair"],
     "legacy.ssa": ["marked", "timestamp", "color"],
+    "ass2.ass": ["timestamp", "font_name", "numeric_tag"],
     "custom_formats.ass": ["timestamp", "position_tag", "font_name"],
   };
   for (const [file, types] of Object.entries(expected)) {

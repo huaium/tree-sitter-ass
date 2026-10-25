@@ -1,6 +1,6 @@
 # Syntax tree reference
 
-The parser recognizes ASS v4+ and SSA v4 syntax. It produces a concrete syntax
+The parser recognizes ASS v4+, SSA v4, and ASS v4++ syntax. It produces a concrete syntax
 tree for editors and analysis tools. Rendering, font lookup, style resolution,
 and validation of visual constraints belong to the consumer.
 
@@ -27,7 +27,9 @@ Style fields include `style_name`, `font_name`, `font_size`, `primary_colour`,
 `secondary_colour`, `tertiary_colour` (SSA), `outline_colour`, `back_colour`,
 `bold`, `italic`, `underline`, `strikeout`, `scale_x`, `scale_y`, `spacing`,
 `angle`, `border_style`, `outline`, `shadow`, `alignment`, `margin_l`, `margin_r`,
-`margin_v`, `alpha_level` (SSA), and `encoding`. Empty columns retain an empty
+`margin_v`, `alpha_level` (SSA), and `encoding`. ASS v4++ adds `margin_t`,
+`margin_b`, and `relative_to`, and uses separate top/bottom margins in events.
+Empty columns retain an empty
 `value`; unrecognized columns use the `unknown` field. Legacy `Marked=0` and
 `Marked=1` values have a `marked` node. Banner and scrolling effects have
 `banner_effect` and `scroll_effect` nodes.
@@ -35,8 +37,10 @@ Style fields include `style_name`, `font_name`, `font_size`, `primary_colour`,
 ## Dialogue syntax
 
 A dialogue text value contains `text`, `escape_sequence`, `override_block`,
-and `drawing_command` children. `\N`, `\n`, and `\h` are escape sequences.
-Whitespace and Unicode text are preserved.
+and `drawing_command` children. `\N`, `\n`, and `\h` are escape sequences,
+as are the libass literal-brace extensions `\{` and `\}`.
+Whitespace and Unicode text are preserved. An opening brace with no closing
+brace on the same line remains literal text, as required by ASS text handling.
 
 Override blocks contain `numeric_tag`, `color_tag`, `alpha_tag`, `font_tag`,
 `reset_tag`, `position_tag`, `move_tag`, `fade_tag`, `transform_tag`, `clip_tag`,
@@ -58,7 +62,7 @@ Encoded attachment lines are `attachment_data` nodes after a matching
 Payload characters that resemble comments or brackets remain encoded data.
 
 Records are bounded by LF, CRLF, CR, or end of file. Malformed timestamps,
-incomplete tags, and invalid drawing parameter counts produce error nodes.
+invalid parameters in closed override blocks, and invalid drawing parameter counts produce error nodes.
 Parsing can recover at subsequent records and sections. Missing nodes and
 `ERROR` nodes should be checked when a consumer needs validated input.
 

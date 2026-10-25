@@ -2,7 +2,7 @@
 #define TREE_SITTER_ASS_SYNTAX_H_
 
 enum AssRecord { NO_RECORD, EVENT_RECORD, STYLE_RECORD };
-#define ASS_SYNTAX_SERIALIZED_SIZE (ASS_FIELD_COUNT * 8 + 26)
+#define ASS_SYNTAX_SERIALIZED_SIZE (ASS_FIELD_COUNT * 8 + 27)
 _Static_assert(ASS_SYNTAX_SERIALIZED_SIZE + 3 <= TREE_SITTER_SERIALIZATION_BUFFER_SIZE,
                "ASS scanner state must fit in Tree-sitter's serialization buffer");
 
@@ -16,6 +16,7 @@ typedef struct {
   uint8_t record;
   bool in_styles;
   bool legacy;
+  bool extended;
   bool event_format_defined;
   bool style_format_defined;
   bool field_started;
@@ -43,16 +44,29 @@ static void ass_default_formats(AssSyntax *syntax) {
     FIELD_italic, FIELD_border_style, FIELD_outline, FIELD_shadow, FIELD_alignment,
     FIELD_margin_l, FIELD_margin_r, FIELD_margin_v, FIELD_alpha_level, FIELD_encoding,
   };
+  static const enum AssField ass2_event[] = {
+    FIELD_layer, FIELD_start, FIELD_end, FIELD_event_style, FIELD_actor,
+    FIELD_margin_l, FIELD_margin_r, FIELD_margin_t, FIELD_margin_b, FIELD_effect,
+  };
+  static const enum AssField ass2_style[] = {
+    FIELD_style_name, FIELD_font_name, FIELD_font_size, FIELD_primary_colour,
+    FIELD_secondary_colour, FIELD_outline_colour, FIELD_back_colour, FIELD_bold,
+    FIELD_italic, FIELD_underline, FIELD_strikeout, FIELD_scale_x, FIELD_scale_y,
+    FIELD_spacing, FIELD_angle, FIELD_border_style, FIELD_outline, FIELD_shadow,
+    FIELD_alignment, FIELD_margin_l, FIELD_margin_r, FIELD_margin_t, FIELD_margin_b,
+    FIELD_encoding, FIELD_relative_to,
+  };
   if (!syntax->event_format_defined) {
+    const enum AssField *fields = syntax->extended ? ass2_event : event;
+    syntax->event_text = syntax->extended ? 10 : 9;
     for (unsigned i = 0; i < ASS_FIELD_COUNT; i++) syntax->event_positions[i] = UINT32_MAX;
-    for (unsigned i = 0; i < sizeof(event) / sizeof(event[0]); i++) {
-      syntax->event_positions[i == 0 && syntax->legacy ? FIELD_marked : event[i]] = i;
+    for (unsigned i = 0; i < syntax->event_text; i++) {
+      syntax->event_positions[i == 0 && syntax->legacy ? FIELD_marked : fields[i]] = i;
     }
-    syntax->event_text = 9;
   }
   if (!syntax->style_format_defined) {
-    const enum AssField *fields = syntax->legacy ? ssa_style : ass_style;
-    syntax->style_count = syntax->legacy ? 18 : 23;
+    const enum AssField *fields = syntax->legacy ? ssa_style : syntax->extended ? ass2_style : ass_style;
+    syntax->style_count = syntax->legacy ? 18 : syntax->extended ? 25 : 23;
     for (unsigned i = 0; i < ASS_FIELD_COUNT; i++) syntax->style_positions[i] = UINT32_MAX;
     for (unsigned i = 0; i < syntax->style_count; i++) syntax->style_positions[fields[i]] = i;
   }
@@ -72,6 +86,7 @@ static enum AssField ass_field_kind(const char *name, bool style) {
     {"angle", FIELD_angle}, {"borderstyle", FIELD_border_style}, {"outline", FIELD_outline},
     {"shadow", FIELD_shadow}, {"alignment", FIELD_alignment},
     {"alphalevel", FIELD_alpha_level}, {"encoding", FIELD_encoding},
+    {"margint", FIELD_margin_t}, {"marginb", FIELD_margin_b}, {"relativeto", FIELD_relative_to},
   };
   if (strcmp(name, "name") == 0) return style ? FIELD_style_name : FIELD_actor;
   if (strcmp(name, "style") == 0 && !style) return FIELD_event_style;
@@ -198,6 +213,15 @@ static bool ass_scan_syntax(AssSyntax *syntax, TSLexer *lexer, const bool *valid
   if (valid[OVERRIDE_START] && lexer->lookahead == '{') {
     lexer->advance(lexer, false);
     lexer->mark_end(lexer);
+    // Without a closing brace, ASS treats the rest of this line as literal text.
+    while (!lexer->eof(lexer) && lexer->lookahead != '\r' &&
+           lexer->lookahead != '\n' && lexer->lookahead != '}') lexer->advance(lexer, false);
+    if (lexer->lookahead != '}') {
+      if (!valid[TEXT_CHUNK] || syntax->drawing) return false;
+      lexer->mark_end(lexer);
+      lexer->result_symbol = TEXT_CHUNK;
+      return true;
+    }
     syntax->in_override = true;
     lexer->result_symbol = OVERRIDE_START;
     return true;
@@ -287,7 +311,8 @@ static bool ass_scan_syntax(AssSyntax *syntax, TSLexer *lexer, const bool *valid
   while (!lexer->eof(lexer) && lexer->lookahead != '\r' && lexer->lookahead != '\n' && lexer->lookahead != '{') {
     if (lexer->lookahead == '\\') {
       lexer->advance(lexer, false);
-      if (lexer->lookahead == 'N' || lexer->lookahead == 'n' || lexer->lookahead == 'h') {
+      if (lexer->lookahead == 'N' || lexer->lookahead == 'n' || lexer->lookahead == 'h' ||
+          lexer->lookahead == '{' || lexer->lookahead == '}') {
         if (content) { lexer->result_symbol = TEXT_CHUNK; return true; }
         lexer->advance(lexer, false);
         lexer->mark_end(lexer);
@@ -318,6 +343,7 @@ static unsigned ass_syntax_serialize(const AssSyntax *syntax, char *buffer) {
   buffer[offset++] = syntax->record;
   buffer[offset++] = syntax->in_styles;
   buffer[offset++] = syntax->legacy;
+  buffer[offset++] = syntax->extended;
   buffer[offset++] = syntax->event_format_defined;
   buffer[offset++] = syntax->style_format_defined;
   buffer[offset++] = syntax->field_started;
@@ -345,6 +371,7 @@ static unsigned ass_syntax_deserialize(AssSyntax *syntax, const char *buffer) {
   syntax->record = (uint8_t)buffer[offset++];
   syntax->in_styles = buffer[offset++];
   syntax->legacy = buffer[offset++];
+  syntax->extended = buffer[offset++];
   syntax->event_format_defined = buffer[offset++];
   syntax->style_format_defined = buffer[offset++];
   syntax->field_started = buffer[offset++];

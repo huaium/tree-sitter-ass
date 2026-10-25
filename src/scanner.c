@@ -204,7 +204,12 @@ static bool ass_scan(AssScanner *scanner, TSLexer *lexer, const bool *valid_symb
     if (!valid_symbols[symbol] || !ass_match_word(lexer, name)) return false;
     if (symbol == STYLES_SECTION_NAME) {
       scanner->syntax.legacy = lexer->lookahead != '+';
+      scanner->syntax.extended = false;
       if (lexer->lookahead == '+') lexer->advance(lexer, false);
+      if (lexer->lookahead == '+') {
+        scanner->syntax.extended = true;
+        lexer->advance(lexer, false);
+      }
       if (!ass_horizontal_space(lexer->lookahead)) return false;
       while (ass_horizontal_space(lexer->lookahead)) lexer->advance(lexer, false);
       if (!ass_match_word(lexer, "styles")) return false;
@@ -249,6 +254,11 @@ static bool ass_scan(AssScanner *scanner, TSLexer *lexer, const bool *valid_symb
     while (ass_horizontal_space(lexer->lookahead)) lexer->advance(lexer, false);
     if (ass_match_word(lexer, "v4.00")) {
       scanner->syntax.legacy = lexer->lookahead != '+';
+      scanner->syntax.extended = false;
+      if (lexer->lookahead == '+') {
+        lexer->advance(lexer, false);
+        scanner->syntax.extended = lexer->lookahead == '+';
+      }
       ass_default_formats(&scanner->syntax);
     }
     lexer->result_symbol = SCRIPT_TYPE_KEY;
