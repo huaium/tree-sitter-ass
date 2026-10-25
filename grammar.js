@@ -67,7 +67,7 @@ function sectionRules($, words) {
     rules.push(
       field(
         `section_name_${toLowerCaseUnderscored(word)}`,
-        alias(token.immediate(caseInsensitive(word)), $.section_name),
+        alias(word === "Events" ? $._events_section_name : token.immediate(caseInsensitive(word)), $.section_name),
       ),
     ),
   );
@@ -154,6 +154,18 @@ module.exports = grammar({
   // Useless whitespace and BOM
   extras: ($) => [/\s/, "\uFEFF"],
 
+  externals: ($) => [
+    $._section_start,
+    $._events_section_name,
+    $._event_format_key,
+    $._event_dialogue_key,
+    $._event_comment_key,
+    $._event_field,
+    $._event_separator,
+    $._event_text,
+    $._error_sentinel,
+  ],
+
   rules: {
     source_file: ($) => repeat($.section),
 
@@ -164,7 +176,7 @@ module.exports = grammar({
       ),
 
     // Section header
-    section_header: ($) => seq("[", $._section_name, token.immediate("]")),
+    section_header: ($) => seq(alias($._section_start, "["), $._section_name, token.immediate("]")),
     _section_name: ($) =>
       choice(
         ...sectionRules($, ["Script Info", "Events", "Fonts", "Graphics"]),
@@ -185,6 +197,21 @@ module.exports = grammar({
     // Key value pair
     key_value_pair: ($) =>
       choice(
+        seq(
+          field("key_format", alias($._event_format_key, $.key)),
+          ":",
+          field("values_format", $.values),
+        ),
+        seq(
+          field("key_dialogue", alias($._event_dialogue_key, $.key)),
+          ":",
+          field("values_dialogue", alias($._event_values, $.values)),
+        ),
+        seq(
+          field("key_comment", alias($._event_comment_key, $.key)),
+          ":",
+          field("values_comment", alias($._event_values, $.values)),
+        ),
         ...keyValueRules($, [
           // Script Info
           "Title",
@@ -222,6 +249,10 @@ module.exports = grammar({
         ]),
       ),
     values: ($) => seq($.value, repeat(seq(",", $.value))),
+    _event_values: ($) => seq(
+      repeat(seq(alias($._event_field, $.value), alias($._event_separator, ","))),
+      alias($._event_text, $.value),
+    ),
     value: ($) => token(/[^,\r\n]*/),
   },
 });

@@ -10,6 +10,92 @@ test("can load grammar", () => {
   assert.doesNotThrow(() => parser.setLanguage(require(".")));
 });
 
+test("event Text preserves commas and override tags for declared formats", () => {
+  const parser = new Parser();
+  parser.setLanguage(require("."));
+  const formats = [
+    ["Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text", "0,0:00:01.00,0:00:02.00,Default,,0,0,0,,", 10],
+    ["Marked, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text", "Marked=0,0:00:01.00,0:00:02.00,Default,,0,0,0,,", 10],
+    ["Start, End, Layer, Custom, Text", "0:00:01.00,0:00:02.00,0,,", 5],
+    ["Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Extra, Text", "0,0:00:01.00,0:00:02.00,Default,,0,0,0,,,", 11],
+    ["Text", "", 1],
+    ["layer,\t text ", "0,", 2],
+  ];
+  for (const [format, fields, count] of formats) {
+    for (const key of ["Dialogue", "Comment"]) {
+      for (const newline of ["\n", "\r\n", "\r"]) {
+        for (const text of ["Hello, world", "{\\pos(100,200)\\t(0,100,\\fs30)}字幕, test", ",leading,trailing,", "", "  spaced, text  "]) {
+          const source = `[Events]${newline}Format: ${format}${newline}${key}:` + fields + text;
+          const root = parser.parse(source).rootNode;
+          assert.strictEqual(root.hasError, false, source);
+          const pair = root.descendantsOfType("key_value_pair").at(-1);
+          const values = pair.childForFieldName(`values_${key.toLowerCase()}`);
+          assert.strictEqual(values.namedChildCount, count, source);
+          assert.strictEqual(values.lastNamedChild.type, "value");
+          assert.strictEqual(values.lastNamedChild.text, text, source);
+        }
+      }
+    }
+  }
+});
+
+test("event format state follows sections and format changes", () => {
+  const parser = new Parser();
+  parser.setLanguage(require("."));
+  const source = "[V4+ Styles]\nFormat: Name, Fontname\nStyle: Default,Arial\n" +
+    "[Events]\nDialogue:0,0:00:01.00,0:00:02.00,Default,,0,0,0,,default, text\n" +
+    "Format: Layer, Text\nDialogue:0,short, text\n" +
+    "Format: Start, End, Text\nComment:0:00:01.00,0:00:02.00,another, text\n" +
+    "[V4+ Styles]\nFormat: Name,Fontname\nStyle: Default,Arial\n" +
+    "[ Events ]\ndIaLoGuE:0:00:01.00,0:00:02.00,continued, text";
+  const root = parser.parse(source).rootNode;
+  assert.strictEqual(root.hasError, false, root.toString());
+  const events = root.descendantsOfType("key_value_pair").filter((node) =>
+    node.childForFieldName("key_dialogue") || node.childForFieldName("key_comment"),
+  );
+  assert.deepStrictEqual(events.map((node) => node.lastNamedChild.namedChildCount), [10, 2, 3, 3]);
+  assert.deepStrictEqual(events.map((node) => node.lastNamedChild.lastNamedChild.text),
+    ["default, text", "short, text", "another, text", "continued, text"]);
+});
+
+test("highlighting treats commas inside event Text as string content", () => {
+  const language = require(".");
+  const parser = new Parser();
+  parser.setLanguage(language);
+  const text = "{\\pos(100,200)}Hello, world";
+  const root = parser.parse(`[Events]\nFormat: Layer, Text\nDialogue:0,${text}`).rootNode;
+  const query = new Parser.Query(language, readFileSync(
+    join(__dirname, "../../queries/highlights.scm"), "utf8",
+  ));
+  const captures = query.captures(root);
+  const textCapture = captures.find((capture) => capture.name === "string" && capture.node.text === text);
+  assert.ok(textCapture);
+  assert.ok(!captures.some((capture) => capture.name === "punctuation.delimiter" &&
+    capture.node.startIndex >= textCapture.node.startIndex));
+});
+
+test("changing Format incrementally updates the following Text boundary", () => {
+  const parser = new Parser();
+  parser.setLanguage(require("."));
+  const before = "[Events]\nFormat: Layer, Extra, Text\nDialogue:0,first,second,third\n";
+  const oldTree = parser.parse(before);
+  const startIndex = before.indexOf("Extra, ");
+  oldTree.edit({
+    startIndex, oldEndIndex: startIndex + 7, newEndIndex: startIndex,
+    startPosition: { row: 1, column: 15 },
+    oldEndPosition: { row: 1, column: 22 },
+    newEndPosition: { row: 1, column: 15 },
+  });
+  const after = before.replace("Extra, ", "");
+  const incremental = parser.parse(after, oldTree);
+  const fresh = parser.parse(after);
+  assert.strictEqual(incremental.rootNode.hasError, false);
+  assert.strictEqual(incremental.rootNode.toString(), fresh.rootNode.toString());
+  const values = incremental.rootNode.descendantsOfType("key_value_pair").at(-1).lastNamedChild;
+  assert.strictEqual(values.namedChildCount, 2);
+  assert.strictEqual(values.lastNamedChild.text, "first,second,third");
+});
+
 test("section headers cannot cross line endings or contain opening brackets", () => {
   const parser = new Parser();
   parser.setLanguage(require("."));
@@ -93,14 +179,14 @@ test("parses ASS sections, comments, and comma-separated dialogue", () => {
   const parser = new Parser();
   parser.setLanguage(require("."));
   const source = "\uFEFF[Script Info]\r\n; Subtitle metadata\r\nTitle: Example\r\n" +
-    "[Events]\r\nDialogue: 0,0:00:01.00,0:00:02.00,Default,Hello world\r\n";
+    "[Events]\r\nFormat: Layer,Start,End,Style,Text\r\nDialogue: 0,0:00:01.00,0:00:02.00,Default,Hello world\r\n";
   const tree = parser.parse(source);
   assert.strictEqual(tree.rootNode.hasError, false);
   assert.strictEqual(tree.rootNode.namedChildCount, 2);
   assert.strictEqual(tree.rootNode.namedChild(1).type, "section");
   const values = tree.rootNode.descendantsOfType("values");
-  assert.strictEqual(values[1].namedChildCount, 5);
-  assert.strictEqual(values[1].lastNamedChild.text, "Hello world");
+  assert.strictEqual(values[2].namedChildCount, 5);
+  assert.strictEqual(values[2].lastNamedChild.text, "Hello world");
 });
 
 test("highlight query captures section names, keys, and values", () => {

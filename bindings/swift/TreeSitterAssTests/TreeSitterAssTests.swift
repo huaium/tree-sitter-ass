@@ -20,7 +20,7 @@ final class TreeSitterAssTests: XCTestCase {
             "[V4 Styles]\nFormat: Name,Fontname\nStyle: Default,Arial\n",
             "[V4+ Styles]\nFormat: Name,Fontname\nStyle: Default,Arial\n",
             "[Custom Section]\nCustom Field: custom value\n",
-            "[Events]\nDialogue: 0,0:00:01.00,0:00:02.00,Default,Hello\n",
+            "[Events]\nFormat: Layer,Start,End,Style,Text\nDialogue: 0,0:00:01.00,0:00:02.00,Default,Hello\n",
         ] {
             let tree = try XCTUnwrap(parser.parse(source))
             let root = try XCTUnwrap(tree.rootNode)
@@ -28,6 +28,19 @@ final class TreeSitterAssTests: XCTestCase {
         }
         let malformed = try XCTUnwrap(parser.parse("[Script Info"))
         XCTAssertTrue(try XCTUnwrap(malformed.rootNode).hasError)
+    }
+
+    func testDialogueTextPreservesCommas() throws {
+        let parser = Parser()
+        try parser.setLanguage(Language(language: tree_sitter_ass()))
+        let tree = try XCTUnwrap(parser.parse("[Events]\nFormat: Layer, Text\nDialogue:0,{\\pos(100,200)}Hello, world\n"))
+        let root = try XCTUnwrap(tree.rootNode)
+        XCTAssertFalse(root.hasError)
+        let query = try Query(language: Language(language: tree_sitter_ass()), data: Data(
+            "(key_value_pair values_dialogue: (values (value) @field))".utf8
+        ))
+        let captures = query.execute(in: tree).flatMap { $0.captures }
+        XCTAssertEqual(captures.count, 2)
     }
 
     func testHighlightQuery() throws {

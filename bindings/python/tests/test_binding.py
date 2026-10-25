@@ -21,7 +21,7 @@ class TestLanguage(TestCase):
             b"[V4 Styles]\nFormat: Name,Fontname\nStyle: Default,Arial\n",
             b"[V4+ Styles]\nFormat: Name,Fontname\nStyle: Default,Arial\n",
             b"[Custom Section]\nCustom Field: custom value\n",
-            b"[Events]\nDialogue: 0,0:00:01.00,0:00:02.00,Default,Hello\n",
+            b"[Events]\nFormat: Layer,Start,End,Style,Text\nDialogue: 0,0:00:01.00,0:00:02.00,Default,Hello\n",
         ]
         for source in sources:
             with self.subTest(source=source):
@@ -31,6 +31,15 @@ class TestLanguage(TestCase):
 
     def test_reports_malformed_section(self):
         self.assertTrue(self.parser.parse(b"[Script Info").root_node.has_error)
+
+    def test_dialogue_text_preserves_commas(self):
+        source = b"[Events]\nFormat: Layer, Text\nDialogue:0,{\\pos(100,200)}Hello, world\n"
+        root = self.parser.parse(source).root_node
+        self.assertFalse(root.has_error)
+        pair = root.named_children[0].named_children[-1]
+        values = pair.child_by_field_name("values_dialogue")
+        self.assertEqual(values.named_child_count, 2)
+        self.assertEqual(values.named_children[-1].text, b"{\\pos(100,200)}Hello, world")
 
     def test_highlight_query(self):
         query_path = Path(__file__).resolve().parents[3] / "queries/highlights.scm"

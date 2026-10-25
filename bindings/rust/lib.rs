@@ -62,7 +62,7 @@ mod tests {
             "[V4 Styles]\nFormat: Name,Fontname\nStyle: Default,Arial\n",
             "[V4+ Styles]\nFormat: Name,Fontname\nStyle: Default,Arial\n",
             "[Custom Section]\nCustom Field: custom value\n",
-            "[Events]\nDialogue: 0,0:00:01.00,0:00:02.00,Default,Hello\n",
+            "[Events]\nFormat: Layer,Start,End,Style,Text\nDialogue: 0,0:00:01.00,0:00:02.00,Default,Hello\n",
         ] {
             let tree = parser.parse(source, None).unwrap();
             assert!(!tree.root_node().has_error(), "{source:?}");
@@ -82,5 +82,20 @@ mod tests {
         assert!(query.capture_names().contains(&"type"));
         assert!(query.capture_names().contains(&"property"));
         assert!(query.capture_names().contains(&"string"));
+    }
+
+    #[test]
+    fn test_dialogue_text_preserves_commas() {
+        let mut parser = tree_sitter::Parser::new();
+        parser.set_language(&super::LANGUAGE.into()).unwrap();
+        let source = "[Events]\nFormat: Layer, Text\nDialogue:0,{\\pos(100,200)}Hello, world\n";
+        let tree = parser.parse(source, None).unwrap();
+        let root = tree.root_node();
+        assert!(!root.has_error());
+        let pair = root.named_child(0).unwrap().named_child(2).unwrap();
+        let values = pair.child_by_field_name("values_dialogue").unwrap();
+        assert_eq!(values.named_child_count(), 2);
+        assert_eq!(values.named_child(1).unwrap().utf8_text(source.as_bytes()).unwrap(),
+                   "{\\pos(100,200)}Hello, world");
     }
 }

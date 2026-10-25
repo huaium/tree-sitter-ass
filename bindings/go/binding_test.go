@@ -14,6 +14,31 @@ func TestCanLoadGrammar(t *testing.T) {
 	}
 }
 
+func TestDialogueTextPreservesCommas(t *testing.T) {
+	parser := tree_sitter.NewParser()
+	defer parser.Close()
+	if err := parser.SetLanguage(tree_sitter.NewLanguage(tree_sitter_ass.Language())); err != nil {
+		t.Fatal(err)
+	}
+	source := []byte("[Events]\nFormat: Layer, Text\nDialogue:0,{\\pos(100,200)}Hello, world\n")
+	tree := parser.Parse(source, nil)
+	if tree == nil {
+		t.Fatal("Parser returned no tree")
+	}
+	defer tree.Close()
+	root := tree.RootNode()
+	if root.HasError() {
+		t.Fatal(root.ToSexp())
+	}
+	values := root.NamedChild(0).NamedChild(2).ChildByFieldName("values_dialogue")
+	if values.NamedChildCount() != 2 {
+		t.Fatalf("Expected two fields, got %d", values.NamedChildCount())
+	}
+	if text := values.NamedChild(1).Utf8Text(source); text != "{\\pos(100,200)}Hello, world" {
+		t.Fatalf("Unexpected Text field: %q", text)
+	}
+}
+
 func TestSubtitleVariantsAndErrors(t *testing.T) {
 	parser := tree_sitter.NewParser()
 	defer parser.Close()
@@ -27,7 +52,7 @@ func TestSubtitleVariantsAndErrors(t *testing.T) {
 		"[V4 Styles]\nFormat: Name,Fontname\nStyle: Default,Arial\n",
 		"[V4+ Styles]\nFormat: Name,Fontname\nStyle: Default,Arial\n",
 		"[Custom Section]\nCustom Field: custom value\n",
-		"[Events]\nDialogue: 0,0:00:01.00,0:00:02.00,Default,Hello\n",
+		"[Events]\nFormat: Layer,Start,End,Style,Text\nDialogue: 0,0:00:01.00,0:00:02.00,Default,Hello\n",
 	} {
 		t.Run(source, func(t *testing.T) {
 			tree := parser.Parse([]byte(source), nil)
