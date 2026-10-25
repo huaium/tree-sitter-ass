@@ -26,7 +26,10 @@
     "prebuilds/**",
     "bindings/node/*",
     "queries/*",
+    "docs/*",
     "src/**",
+    "test/*.ass",
+    "test/*.ssa",
     "*.wasm"
   ],
   "dependencies": {

@@ -115,4 +115,22 @@ mod tests {
             assert_eq!(section.named_child(3).unwrap().utf8_text(source.as_bytes()).unwrap(), "[AAAA]");
         }
     }
+
+    #[test]
+    fn test_structured_subtitle_syntax() {
+        let mut parser = tree_sitter::Parser::new();
+        parser.set_language(&super::LANGUAGE.into()).unwrap();
+        let source = concat!(
+            "[V4+ Styles]\nFormat: Name, Fontsize\nStyle:Default,20\n",
+            "[Events]\nFormat: Start, End, Text\n",
+            "Dialogue:0:00:01.00,0:00:02.00,{\\p1}m 0 0 l 10 10{\\p0}{\\t(0,500,\\fs30)}text\\Nnext\n",
+        );
+        let tree = parser.parse(source, None).unwrap();
+        assert!(!tree.root_node().has_error());
+        let syntax = tree.root_node().to_sexp();
+        assert_eq!(syntax.matches("(timestamp)").count(), 2);
+        for node in ["font_size: (number)", "(drawing_line", "(transform_tag", "(escape_sequence)"] {
+            assert!(syntax.contains(node), "{syntax}");
+        }
+    }
 }

@@ -1,5 +1,397 @@
 [
   {
+    "type": "actor_name",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": false,
+      "required": true,
+      "types": [
+        {
+          "type": "field_string",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "alpha_tag",
+    "named": true,
+    "fields": {
+      "name": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "tag_name",
+            "named": true
+          }
+        ]
+      }
+    },
+    "children": {
+      "multiple": false,
+      "required": false,
+      "types": [
+        {
+          "type": "override_color",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "banner_effect",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": true,
+      "required": true,
+      "types": [
+        {
+          "type": "integer",
+          "named": true
+        },
+        {
+          "type": "number",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "clip_tag",
+    "named": true,
+    "fields": {
+      "name": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "tag_name",
+            "named": true
+          }
+        ]
+      }
+    },
+    "children": {
+      "multiple": true,
+      "required": true,
+      "types": [
+        {
+          "type": "drawing_command",
+          "named": true
+        },
+        {
+          "type": "number",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "color_tag",
+    "named": true,
+    "fields": {
+      "name": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "tag_name",
+            "named": true
+          }
+        ]
+      }
+    },
+    "children": {
+      "multiple": false,
+      "required": false,
+      "types": [
+        {
+          "type": "override_color",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "drawing_bezier",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": true,
+      "required": true,
+      "types": [
+        {
+          "type": "drawing_point",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "drawing_close",
+    "named": true,
+    "fields": {}
+  },
+  {
+    "type": "drawing_command",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": false,
+      "required": true,
+      "types": [
+        {
+          "type": "drawing_bezier",
+          "named": true
+        },
+        {
+          "type": "drawing_close",
+          "named": true
+        },
+        {
+          "type": "drawing_extend",
+          "named": true
+        },
+        {
+          "type": "drawing_line",
+          "named": true
+        },
+        {
+          "type": "drawing_move",
+          "named": true
+        },
+        {
+          "type": "drawing_move_open",
+          "named": true
+        },
+        {
+          "type": "drawing_spline",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "drawing_extend",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": true,
+      "required": true,
+      "types": [
+        {
+          "type": "drawing_point",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "drawing_line",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": true,
+      "required": true,
+      "types": [
+        {
+          "type": "drawing_point",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "drawing_mode_tag",
+    "named": true,
+    "fields": {
+      "name": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "tag_name",
+            "named": true
+          }
+        ]
+      }
+    },
+    "children": {
+      "multiple": false,
+      "required": false,
+      "types": [
+        {
+          "type": "integer",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "drawing_move",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": false,
+      "required": true,
+      "types": [
+        {
+          "type": "drawing_point",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "drawing_move_open",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": false,
+      "required": true,
+      "types": [
+        {
+          "type": "drawing_point",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "drawing_point",
+    "named": true,
+    "fields": {
+      "x": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "number",
+            "named": true
+          }
+        ]
+      },
+      "y": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "number",
+            "named": true
+          }
+        ]
+      }
+    }
+  },
+  {
+    "type": "drawing_spline",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": true,
+      "required": true,
+      "types": [
+        {
+          "type": "drawing_point",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "effect",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": false,
+      "required": true,
+      "types": [
+        {
+          "type": "banner_effect",
+          "named": true
+        },
+        {
+          "type": "field_string",
+          "named": true
+        },
+        {
+          "type": "scroll_effect",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "fade_tag",
+    "named": true,
+    "fields": {
+      "name": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "tag_name",
+            "named": true
+          }
+        ]
+      }
+    },
+    "children": {
+      "multiple": true,
+      "required": true,
+      "types": [
+        {
+          "type": "number",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "font_name",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": false,
+      "required": true,
+      "types": [
+        {
+          "type": "field_string",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "font_tag",
+    "named": true,
+    "fields": {
+      "font": {
+        "multiple": false,
+        "required": false,
+        "types": [
+          {
+            "type": "tag_string",
+            "named": true
+          }
+        ]
+      },
+      "name": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "tag_name",
+            "named": true
+          }
+        ]
+      }
+    }
+  },
+  {
     "type": "key_value_pair",
     "named": true,
     "fields": {
@@ -566,6 +958,213 @@
     }
   },
   {
+    "type": "marked",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": false,
+      "required": true,
+      "types": [
+        {
+          "type": "integer",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "move_tag",
+    "named": true,
+    "fields": {
+      "name": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "tag_name",
+            "named": true
+          }
+        ]
+      }
+    },
+    "children": {
+      "multiple": true,
+      "required": true,
+      "types": [
+        {
+          "type": "number",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "numeric_tag",
+    "named": true,
+    "fields": {
+      "argument": {
+        "multiple": false,
+        "required": false,
+        "types": [
+          {
+            "type": "number",
+            "named": true
+          }
+        ]
+      },
+      "name": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "tag_name",
+            "named": true
+          }
+        ]
+      }
+    }
+  },
+  {
+    "type": "override_block",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": true,
+      "required": false,
+      "types": [
+        {
+          "type": "alpha_tag",
+          "named": true
+        },
+        {
+          "type": "clip_tag",
+          "named": true
+        },
+        {
+          "type": "color_tag",
+          "named": true
+        },
+        {
+          "type": "drawing_mode_tag",
+          "named": true
+        },
+        {
+          "type": "fade_tag",
+          "named": true
+        },
+        {
+          "type": "font_tag",
+          "named": true
+        },
+        {
+          "type": "move_tag",
+          "named": true
+        },
+        {
+          "type": "numeric_tag",
+          "named": true
+        },
+        {
+          "type": "override_comment",
+          "named": true
+        },
+        {
+          "type": "position_tag",
+          "named": true
+        },
+        {
+          "type": "reset_tag",
+          "named": true
+        },
+        {
+          "type": "transform_tag",
+          "named": true
+        },
+        {
+          "type": "unknown_tag",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "position_tag",
+    "named": true,
+    "fields": {
+      "name": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "tag_name",
+            "named": true
+          }
+        ]
+      },
+      "x": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "number",
+            "named": true
+          }
+        ]
+      },
+      "y": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "number",
+            "named": true
+          }
+        ]
+      }
+    }
+  },
+  {
+    "type": "reset_tag",
+    "named": true,
+    "fields": {
+      "name": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "tag_name",
+            "named": true
+          }
+        ]
+      },
+      "style": {
+        "multiple": false,
+        "required": false,
+        "types": [
+          {
+            "type": "tag_string",
+            "named": true
+          }
+        ]
+      }
+    }
+  },
+  {
+    "type": "scroll_effect",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": true,
+      "required": true,
+      "types": [
+        {
+          "type": "number",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
     "type": "section",
     "named": true,
     "fields": {},
@@ -668,7 +1267,547 @@
       "required": false,
       "types": [
         {
+          "type": "comment",
+          "named": true
+        },
+        {
           "type": "section",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "style_name",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": false,
+      "required": true,
+      "types": [
+        {
+          "type": "field_string",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "transform_tag",
+    "named": true,
+    "fields": {
+      "name": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "tag_name",
+            "named": true
+          }
+        ]
+      }
+    },
+    "children": {
+      "multiple": true,
+      "required": true,
+      "types": [
+        {
+          "type": "alpha_tag",
+          "named": true
+        },
+        {
+          "type": "clip_tag",
+          "named": true
+        },
+        {
+          "type": "color_tag",
+          "named": true
+        },
+        {
+          "type": "drawing_mode_tag",
+          "named": true
+        },
+        {
+          "type": "fade_tag",
+          "named": true
+        },
+        {
+          "type": "font_tag",
+          "named": true
+        },
+        {
+          "type": "move_tag",
+          "named": true
+        },
+        {
+          "type": "number",
+          "named": true
+        },
+        {
+          "type": "numeric_tag",
+          "named": true
+        },
+        {
+          "type": "position_tag",
+          "named": true
+        },
+        {
+          "type": "reset_tag",
+          "named": true
+        },
+        {
+          "type": "transform_tag",
+          "named": true
+        },
+        {
+          "type": "unknown_tag",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "unknown_tag",
+    "named": true,
+    "fields": {
+      "name": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "tag_name",
+            "named": true
+          }
+        ]
+      }
+    },
+    "children": {
+      "multiple": false,
+      "required": false,
+      "types": [
+        {
+          "type": "unknown_tag_arguments",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "unknown_tag_arguments",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": true,
+      "required": false,
+      "types": [
+        {
+          "type": "alpha_tag",
+          "named": true
+        },
+        {
+          "type": "clip_tag",
+          "named": true
+        },
+        {
+          "type": "color_tag",
+          "named": true
+        },
+        {
+          "type": "drawing_mode_tag",
+          "named": true
+        },
+        {
+          "type": "fade_tag",
+          "named": true
+        },
+        {
+          "type": "font_tag",
+          "named": true
+        },
+        {
+          "type": "move_tag",
+          "named": true
+        },
+        {
+          "type": "numeric_tag",
+          "named": true
+        },
+        {
+          "type": "position_tag",
+          "named": true
+        },
+        {
+          "type": "reset_tag",
+          "named": true
+        },
+        {
+          "type": "transform_tag",
+          "named": true
+        },
+        {
+          "type": "unknown_tag",
+          "named": true
+        },
+        {
+          "type": "unknown_tag_arguments",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "value",
+    "named": true,
+    "fields": {
+      "actor": {
+        "multiple": false,
+        "required": false,
+        "types": [
+          {
+            "type": "actor_name",
+            "named": true
+          }
+        ]
+      },
+      "alignment": {
+        "multiple": false,
+        "required": false,
+        "types": [
+          {
+            "type": "integer",
+            "named": true
+          }
+        ]
+      },
+      "alpha_level": {
+        "multiple": false,
+        "required": false,
+        "types": [
+          {
+            "type": "integer",
+            "named": true
+          }
+        ]
+      },
+      "angle": {
+        "multiple": false,
+        "required": false,
+        "types": [
+          {
+            "type": "number",
+            "named": true
+          }
+        ]
+      },
+      "back_colour": {
+        "multiple": false,
+        "required": false,
+        "types": [
+          {
+            "type": "color",
+            "named": true
+          }
+        ]
+      },
+      "bold": {
+        "multiple": false,
+        "required": false,
+        "types": [
+          {
+            "type": "integer",
+            "named": true
+          }
+        ]
+      },
+      "border_style": {
+        "multiple": false,
+        "required": false,
+        "types": [
+          {
+            "type": "integer",
+            "named": true
+          }
+        ]
+      },
+      "effect": {
+        "multiple": false,
+        "required": false,
+        "types": [
+          {
+            "type": "effect",
+            "named": true
+          }
+        ]
+      },
+      "encoding": {
+        "multiple": false,
+        "required": false,
+        "types": [
+          {
+            "type": "integer",
+            "named": true
+          }
+        ]
+      },
+      "end": {
+        "multiple": false,
+        "required": false,
+        "types": [
+          {
+            "type": "timestamp",
+            "named": true
+          }
+        ]
+      },
+      "event_style": {
+        "multiple": false,
+        "required": false,
+        "types": [
+          {
+            "type": "style_name",
+            "named": true
+          }
+        ]
+      },
+      "font_name": {
+        "multiple": false,
+        "required": false,
+        "types": [
+          {
+            "type": "font_name",
+            "named": true
+          }
+        ]
+      },
+      "font_size": {
+        "multiple": false,
+        "required": false,
+        "types": [
+          {
+            "type": "number",
+            "named": true
+          }
+        ]
+      },
+      "italic": {
+        "multiple": false,
+        "required": false,
+        "types": [
+          {
+            "type": "integer",
+            "named": true
+          }
+        ]
+      },
+      "layer": {
+        "multiple": false,
+        "required": false,
+        "types": [
+          {
+            "type": "integer",
+            "named": true
+          }
+        ]
+      },
+      "margin_l": {
+        "multiple": false,
+        "required": false,
+        "types": [
+          {
+            "type": "integer",
+            "named": true
+          }
+        ]
+      },
+      "margin_r": {
+        "multiple": false,
+        "required": false,
+        "types": [
+          {
+            "type": "integer",
+            "named": true
+          }
+        ]
+      },
+      "margin_v": {
+        "multiple": false,
+        "required": false,
+        "types": [
+          {
+            "type": "integer",
+            "named": true
+          }
+        ]
+      },
+      "marked": {
+        "multiple": false,
+        "required": false,
+        "types": [
+          {
+            "type": "marked",
+            "named": true
+          }
+        ]
+      },
+      "outline": {
+        "multiple": false,
+        "required": false,
+        "types": [
+          {
+            "type": "number",
+            "named": true
+          }
+        ]
+      },
+      "outline_colour": {
+        "multiple": false,
+        "required": false,
+        "types": [
+          {
+            "type": "color",
+            "named": true
+          }
+        ]
+      },
+      "primary_colour": {
+        "multiple": false,
+        "required": false,
+        "types": [
+          {
+            "type": "color",
+            "named": true
+          }
+        ]
+      },
+      "scale_x": {
+        "multiple": false,
+        "required": false,
+        "types": [
+          {
+            "type": "number",
+            "named": true
+          }
+        ]
+      },
+      "scale_y": {
+        "multiple": false,
+        "required": false,
+        "types": [
+          {
+            "type": "number",
+            "named": true
+          }
+        ]
+      },
+      "secondary_colour": {
+        "multiple": false,
+        "required": false,
+        "types": [
+          {
+            "type": "color",
+            "named": true
+          }
+        ]
+      },
+      "shadow": {
+        "multiple": false,
+        "required": false,
+        "types": [
+          {
+            "type": "number",
+            "named": true
+          }
+        ]
+      },
+      "spacing": {
+        "multiple": false,
+        "required": false,
+        "types": [
+          {
+            "type": "number",
+            "named": true
+          }
+        ]
+      },
+      "start": {
+        "multiple": false,
+        "required": false,
+        "types": [
+          {
+            "type": "timestamp",
+            "named": true
+          }
+        ]
+      },
+      "strikeout": {
+        "multiple": false,
+        "required": false,
+        "types": [
+          {
+            "type": "integer",
+            "named": true
+          }
+        ]
+      },
+      "style_name": {
+        "multiple": false,
+        "required": false,
+        "types": [
+          {
+            "type": "style_name",
+            "named": true
+          }
+        ]
+      },
+      "tertiary_colour": {
+        "multiple": false,
+        "required": false,
+        "types": [
+          {
+            "type": "color",
+            "named": true
+          }
+        ]
+      },
+      "underline": {
+        "multiple": false,
+        "required": false,
+        "types": [
+          {
+            "type": "integer",
+            "named": true
+          }
+        ]
+      },
+      "unknown": {
+        "multiple": false,
+        "required": false,
+        "types": [
+          {
+            "type": "field_string",
+            "named": true
+          }
+        ]
+      }
+    },
+    "children": {
+      "multiple": true,
+      "required": false,
+      "types": [
+        {
+          "type": "drawing_command",
+          "named": true
+        },
+        {
+          "type": "escape_sequence",
+          "named": true
+        },
+        {
+          "type": "override_block",
+          "named": true
+        },
+        {
+          "type": "text",
           "named": true
         }
       ]
@@ -690,6 +1829,14 @@
     }
   },
   {
+    "type": "(",
+    "named": false
+  },
+  {
+    "type": ")",
+    "named": false
+  },
+  {
     "type": ",",
     "named": false
   },
@@ -698,7 +1845,19 @@
     "named": false
   },
   {
+    "type": ";",
+    "named": false
+  },
+  {
+    "type": "=",
+    "named": false
+  },
+  {
     "type": "[",
+    "named": false
+  },
+  {
+    "type": "\\",
     "named": false
   },
   {
@@ -710,7 +1869,27 @@
     "named": true
   },
   {
+    "type": "color",
+    "named": true
+  },
+  {
     "type": "comment",
+    "named": true
+  },
+  {
+    "type": "drawing_command_name",
+    "named": false
+  },
+  {
+    "type": "escape_sequence",
+    "named": true
+  },
+  {
+    "type": "field_string",
+    "named": true
+  },
+  {
+    "type": "integer",
     "named": true
   },
   {
@@ -718,11 +1897,43 @@
     "named": true
   },
   {
+    "type": "number",
+    "named": true
+  },
+  {
+    "type": "override_color",
+    "named": true
+  },
+  {
+    "type": "override_comment",
+    "named": true
+  },
+  {
     "type": "section_name",
     "named": true
   },
   {
-    "type": "value",
+    "type": "tag_name",
     "named": true
+  },
+  {
+    "type": "tag_string",
+    "named": true
+  },
+  {
+    "type": "text",
+    "named": true
+  },
+  {
+    "type": "timestamp",
+    "named": true
+  },
+  {
+    "type": "{",
+    "named": false
+  },
+  {
+    "type": "}",
+    "named": false
   }
 ]

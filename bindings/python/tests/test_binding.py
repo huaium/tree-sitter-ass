@@ -59,6 +59,20 @@ class TestLanguage(TestCase):
                 self.assertEqual([node.type for node in body], ["attachment_data", "attachment_data"])
                 self.assertEqual([node.text for node in body], [b"!!!!", b"[AAAA]"])
 
+    def test_structured_subtitle_syntax(self):
+        source = (b"[V4+ Styles]\nFormat: Name, Fontsize\nStyle:Default,20\n"
+                  b"[Events]\nFormat: Start, End, Text\n"
+                  b"Dialogue:0:00:01.00,0:00:02.00,{\\p1}m 0 0 l 10 10{\\p0}{\\t(0,500,\\fs30)}text\\Nnext\n")
+        root = self.parser.parse(source).root_node
+        self.assertFalse(root.has_error, str(root))
+        query = tree_sitter.Query(self.language,
+            "(timestamp) @time (value font_size: (number)) @size "
+            "(drawing_line) @drawing (transform_tag) @transform (escape_sequence) @escape")
+        captures = tree_sitter.QueryCursor(query).captures(root)
+        self.assertEqual(len(captures["time"]), 2)
+        for name in ["size", "drawing", "transform", "escape"]:
+            self.assertEqual(len(captures[name]), 1, name)
+
     def test_incremental_edit_matches_fresh_parse(self):
         source = b"[Script Info]\nTitle: Example\n"
         start = source.index(b"Example")

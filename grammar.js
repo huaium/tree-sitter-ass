@@ -56,7 +56,7 @@ function sectionRules($, words) {
     field(
       "section_name_styles",
       alias(
-        token.immediate(choice(caseInsensitive("v4 Styles"), caseInsensitive("v4+ Styles"))),
+        $._styles_section_name,
         $.section_name,
       ),
     ),
@@ -153,11 +153,31 @@ function keyValueRules($, words) {
   return rules;
 }
 
+const typedFields = {
+  layer: "integer", marked: "marked", start: "timestamp", end: "timestamp",
+  event_style: "style_name", actor: "actor_name", margin_l: "integer", margin_r: "integer",
+  margin_v: "integer", effect: "effect", style_name: "style_name", font_name: "font_name",
+  font_size: "number", primary_colour: "color", secondary_colour: "color",
+  tertiary_colour: "color", outline_colour: "color", back_colour: "color", bold: "integer",
+  italic: "integer", underline: "integer", strikeout: "integer", scale_x: "number",
+  scale_y: "number", spacing: "number", angle: "number", border_style: "integer",
+  outline: "number", shadow: "number", alignment: "integer", alpha_level: "integer",
+  encoding: "integer", unknown: "field_string",
+};
+
+function tagName($, names) {
+  return alias(token.immediate(prec(2, names.length === 1 ? names[0] : choice(...names))), $.tag_name);
+}
+
+function numberArguments($, count) {
+  return seq($.number, ...Array.from({ length: count - 1 }, () => seq(",", $.number)));
+}
+
 module.exports = grammar({
   name: "ass",
 
   // Useless whitespace and BOM
-  extras: ($) => [/\s/, "\uFEFF"],
+  extras: ($) => [/[ \t\f\v]/, "\uFEFF"],
 
   externals: ($) => [
     $._section_start,
@@ -165,25 +185,55 @@ module.exports = grammar({
     $._event_format_key,
     $._event_dialogue_key,
     $._event_comment_key,
-    $._event_field,
     $._event_separator,
-    $._event_text,
     $._fonts_section_name,
     $._graphics_section_name,
     $._font_attachment_key,
     $._graphics_attachment_key,
     $.attachment_data,
+    $._styles_section_name,
+    $._style_key,
+    $._script_type_key,
+    $._event_picture_key,
+    $._event_sound_key,
+    $._event_movie_key,
+    $._event_command_key,
+    $._text_start,
+    $._text_end,
+    $._record_end,
+    $.text,
+    $.escape_sequence,
+    $._override_start,
+    $._override_end,
+    $._drawing_mode_tag,
+    $._clip_name,
+    $._clip_end,
+    $._transform_start,
+    $._transform_end,
+    $._draw_move,
+    $._draw_move_open,
+    $._draw_line,
+    $._draw_bezier,
+    $._draw_spline,
+    $._draw_extend,
+    $._draw_close,
+    $._eof,
+    ...Object.keys(typedFields).map((name) => $[`_field_${name}`]),
     $._error_sentinel,
   ],
 
   rules: {
-    source_file: ($) => repeat($.section),
+    source_file: ($) => repeat(choice($._newline, seq($.comment, $._line_end), $.section)),
+
+    _newline: ($) => token(/\r\n|\n|\r/),
+    _line_end: ($) => choice($._newline, $._eof),
 
     section: ($) =>
-      seq(
+      prec.right(seq(
         $.section_header,
-        optional(repeat1(choice($.comment, $.key_value_pair, $.attachment_data))),
-      ),
+        $._line_end,
+        repeat(choice($._newline, seq(choice($.comment, $.key_value_pair, $.attachment_data), $._line_end))),
+      )),
 
     // Section header
     section_header: ($) => seq(alias($._section_start, "["), $._section_name, token.immediate("]")),
@@ -207,6 +257,18 @@ module.exports = grammar({
     // Key value pair
     key_value_pair: ($) =>
       choice(
+        ...["picture", "sound", "movie", "command"].map((name) => seq(
+          field(`key_${name}`, alias($[`_event_${name}_key`], $.key)), ":",
+          field(`values_${name}`, alias($._record_values, $.values)),
+        )),
+        seq(
+          field("key_script_type", alias($._script_type_key, $.key)),
+          ":", field("values_script_type", $.values),
+        ),
+        seq(
+          field("key_style", alias($._style_key, $.key)),
+          ":", field("values_style", alias($._record_values, $.values)),
+        ),
         seq(
           field("key_fontname", alias($._font_attachment_key, $.key)),
           ":",
@@ -225,12 +287,12 @@ module.exports = grammar({
         seq(
           field("key_dialogue", alias($._event_dialogue_key, $.key)),
           ":",
-          field("values_dialogue", alias($._event_values, $.values)),
+          field("values_dialogue", alias($._record_values, $.values)),
         ),
         seq(
           field("key_comment", alias($._event_comment_key, $.key)),
           ":",
-          field("values_comment", alias($._event_values, $.values)),
+          field("values_comment", alias($._record_values, $.values)),
         ),
         ...keyValueRules($, [
           // Script Info
@@ -269,10 +331,75 @@ module.exports = grammar({
         ]),
       ),
     values: ($) => seq($.value, repeat(seq(",", $.value))),
-    _event_values: ($) => seq(
-      repeat(seq(alias($._event_field, $.value), alias($._event_separator, ","))),
-      alias($._event_text, $.value),
+    _record_values: ($) => seq(
+      repeat(seq(alias($._typed_field, $.value), alias($._event_separator, ","))),
+      choice(alias($._typed_field, $.value), alias($._text_value, $.value)),
+      $._record_end,
     ),
+    _typed_field: ($) => choice(...Object.entries(typedFields).map(([name, type]) =>
+      seq($[`_field_${name}`], optional(field(name, $[type]))),
+    )),
+    timestamp: ($) => token.immediate(/[ \t]*\d+:[0-5]\d:[0-5]\d\.\d{2}[ \t]*/),
+    integer: ($) => token(prec(1, /[-+]?\d+/)),
+    number: ($) => token(prec(1, /[-+]?(?:\d+(?:\.\d*)?|\.\d+)/)),
+    color: ($) => token(prec(1, /(?:&[hH][0-9a-fA-F]+&?|[-+]?\d+)/)),
+    marked: ($) => seq(optional(seq(token(caseInsensitive("Marked")), "=")), $.integer),
+    field_string: ($) => token.immediate(prec(-1, /[^,\r\n]+/)),
+    style_name: ($) => $.field_string,
+    actor_name: ($) => $.field_string,
+    font_name: ($) => $.field_string,
+    effect: ($) => choice($.banner_effect, $.scroll_effect, $.field_string),
+    banner_effect: ($) => seq(token(prec(1, caseInsensitive("Banner"))), ";", $.number,
+      optional(seq(";", $.integer, optional(seq(";", $.number))))),
+    scroll_effect: ($) => seq(token(prec(1, choice(caseInsensitive("Scroll up"), caseInsensitive("Scroll down")))),
+      ";", $.number, ";", $.number, ";", $.number, optional(seq(";", $.number))),
+
+    _text_value: ($) => seq($._text_start,
+      repeat(choice($.text, $.escape_sequence, $.override_block, $.drawing_command)), $._text_end),
+    override_block: ($) => seq(alias($._override_start, "{"),
+      repeat(choice($._override_tag, $.override_comment)), alias($._override_end, "}")),
+    override_comment: ($) => token(prec(-1, /[^\\}\r\n]+/)),
+    _override_tag: ($) => choice($.numeric_tag, $.color_tag, $.alpha_tag, $.font_tag, $.reset_tag,
+      $.position_tag, $.move_tag, $.fade_tag, $.transform_tag, $.clip_tag, $.drawing_mode_tag, $.unknown_tag),
+    numeric_tag: ($) => seq("\\", field("name", tagName($, [
+      "b", "i", "u", "s", "bord", "xbord", "ybord", "shad", "xshad", "yshad",
+      "be", "blur", "fs", "fscx", "fscy", "fsp", "fr", "frx", "fry", "frz",
+      "fax", "fay", "fe", "a", "an", "q", "k", "K", "kf", "ko", "kt", "pbo",
+    ])), optional(field("argument", $.number))),
+    color_tag: ($) => seq("\\", field("name", tagName($, ["c", "1c", "2c", "3c", "4c"])), optional($.override_color)),
+    alpha_tag: ($) => seq("\\", field("name", tagName($, ["alpha", "1a", "2a", "3a", "4a"])), optional($.override_color)),
+    override_color: ($) => token.immediate(prec(1, /&?[hH]?[0-9a-fA-F]+&?/)),
+    font_tag: ($) => seq("\\", field("name", tagName($, ["fn"])), optional(field("font", $.tag_string))),
+    reset_tag: ($) => seq("\\", field("name", tagName($, ["r"])), optional(field("style", $.tag_string))),
+    tag_string: ($) => token.immediate(/[^\\}\r\n]+/),
+    position_tag: ($) => seq("\\", field("name", tagName($, ["pos", "org"])), "(",
+      field("x", $.number), ",", field("y", $.number), ")"),
+    move_tag: ($) => seq("\\", field("name", tagName($, ["move"])), "(", numberArguments($, 4),
+      optional(seq(",", numberArguments($, 2))), ")"),
+    fade_tag: ($) => seq("\\", choice(
+      seq(field("name", tagName($, ["fad"])), "(", numberArguments($, 2), ")"),
+      seq(field("name", tagName($, ["fade"])), "(", numberArguments($, 7), ")"))),
+    transform_tag: ($) => seq("\\", field("name", alias($._transform_start, $.tag_name)), "(",
+      optional(choice(seq($.number, ","), seq(numberArguments($, 2), ","), seq(numberArguments($, 3), ","))),
+      repeat1($._override_tag), alias($._transform_end, ")")),
+    clip_tag: ($) => seq("\\", field("name", alias($._clip_name, $.tag_name)), "(",
+      choice(numberArguments($, 4), seq(optional(seq($.number, ",")), repeat1($.drawing_command))),
+      alias($._clip_end, ")")),
+    drawing_mode_tag: ($) => seq("\\", field("name", alias($._drawing_mode_tag, $.tag_name)), optional($.integer)),
+    unknown_tag: ($) => prec.right(seq("\\", field("name", alias(token.immediate(prec(-2, /[A-Za-z][A-Za-z0-9]*/)), $.tag_name)),
+      optional($.unknown_tag_arguments))),
+    unknown_tag_arguments: ($) => seq("(", repeat(choice(token(/[^()\\}\r\n]+/), $.unknown_tag_arguments, $._override_tag)), ")"),
+
+    drawing_command: ($) => choice($.drawing_move, $.drawing_move_open, $.drawing_line,
+      $.drawing_bezier, $.drawing_spline, $.drawing_extend, $.drawing_close),
+    drawing_point: ($) => seq(field("x", $.number), field("y", $.number)),
+    drawing_move: ($) => seq(alias($._draw_move, "drawing_command_name"), $.drawing_point),
+    drawing_move_open: ($) => seq(alias($._draw_move_open, "drawing_command_name"), $.drawing_point),
+    drawing_line: ($) => seq(alias($._draw_line, "drawing_command_name"), repeat1($.drawing_point)),
+    drawing_bezier: ($) => seq(alias($._draw_bezier, "drawing_command_name"), repeat1(seq($.drawing_point, $.drawing_point, $.drawing_point))),
+    drawing_spline: ($) => seq(alias($._draw_spline, "drawing_command_name"), $.drawing_point, $.drawing_point, repeat1($.drawing_point)),
+    drawing_extend: ($) => seq(alias($._draw_extend, "drawing_command_name"), repeat1($.drawing_point)),
+    drawing_close: ($) => alias($._draw_close, "drawing_command_name"),
     value: ($) => token(/[^,\r\n]*/),
   },
 });

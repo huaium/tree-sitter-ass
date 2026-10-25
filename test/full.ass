@@ -1,0 +1,75 @@
+[Script Info]
+; Generated for parser regression tests, with [brackets] inside a comment.
+Title: A Day at the Observatory
+Original Script: Parser Test Suite
+ScriptType: v4.00+
+PlayResX: 1920
+PlayResY: 1080
+Collisions: Normal
+WrapStyle: 0
+ScaledBorderAndShadow: yes
+Timer: 100.0000
+YCbCr Matrix: TV.709
+
+[Aegisub Project Garbage]
+Video File: ?dummy:24.000000:2400:1920:1080:0:0:0:
+Video AR Value: 1.777778
+Video Zoom Percent: 0.500000
+Active Line: 0
+
+[V4+ Styles]
+Format: Name, Fontname, Fontsize, PrimaryColour, SecondaryColour, OutlineColour, BackColour, Bold, Italic, Underline, StrikeOut, ScaleX, ScaleY, Spacing, Angle, BorderStyle, Outline, Shadow, Alignment, MarginL, MarginR, MarginV, Encoding
+Style: Default,Arial,48,&H00FFFFFF,&H000000FF,&H00202020,&H80000000,0,0,0,0,100,100,0,0,1,2,1,2,60,60,40,1
+Style: Narration,Times New Roman,42,&H00E0FFFF,&H000000FF,&H00000000,&H80000000,0,-1,0,0,100,100,0.5,0,1,2,0,8,60,60,50,1
+Style: Sign,Arial,36,&H0000FFFF,&H000000FF,&H00000000,&H80000000,-1,0,-1,0,95,100,1.5,-5,3,2,0,5,20,20,20,1
+
+[Events]
+Format: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text
+Comment: 0,0:00:00.00,0:00:00.00,Default,Editor,0,0,0,,This file covers ordinary subtitles and structured syntax.
+Dialogue: 0,0:00:01.00,0:00:04.25,Default,Alex,0000,0000,0000,,Welcome, everyone, to the observatory.
+Dialogue: 0,0:00:04.25,0:00:07.50,Narration,,0040,0040,0060,,The doors open at dusk.\NPlease keep the entrance clear.
+Dialogue: 0,0:00:07.50,0:00:10.00,Default,Sam,0,0,0,,A soft\nbreak and a nonbreaking\hspace.
+Dialogue: 1,0:00:10.00,0:00:13.00,Sign,,0,0,0,,{\an8\pos(960,80)\fad(200,300)}OBSERVATORY ENTRANCE
+Dialogue: 0,0:00:13.00,0:00:16.00,Default,Alex,0,0,0,,{\b1}Bring a jacket.{\b0} {\i1}It gets cold.{\i0\u1\s1}Old notice{\u0\s0}
+Dialogue: 0,0:00:16.00,0:00:19.00,Default,,0,0,0,,{\fnTimes New Roman\fs44\fscx105\fscy95\fsp1.5\fe1}Tonight's sky{\rDefault} is clear.
+Dialogue: 0,0:00:19.00,0:00:22.00,Default,,0,0,0,,{\c&HFFFFFF&\1c&H00FFFF&\2c&H0000FF&\3c&H202020&\4c&H000000&}Color channels
+Dialogue: 0,0:00:22.00,0:00:25.00,Default,,0,0,0,,{\alpha&H20&\1a&H00&\2a&H40&\3a&H60&\4a&H80&}Alpha channels
+Dialogue: 0,0:00:25.00,0:00:28.00,Sign,,0,0,0,,{\bord2\xbord3\ybord1\shad2\xshad-2\yshad3\be1\blur0.6}Soft sign outline
+Dialogue: 0,0:00:28.00,0:00:31.00,Sign,,0,0,0,,{\org(960,540)\fr10\frx5\fry-5\frz15\fax0.1\fay-0.1}Rotated sign
+Dialogue: 1,0:00:31.00,0:00:34.00,Sign,,0,0,0,,{\move(100,100,800,100)}Follow the arrow
+Dialogue: 1,0:00:34.00,0:00:37.00,Sign,,0,0,0,,{\move(800,100,100,100,200,2500)\fade(255,0,255,0,200,2500,3000)}Return this way
+Dialogue: 0,0:00:37.00,0:00:40.00,Default,,0,0,0,,{\t(\fs56)}Growing {\t(2,\bord4)}outline
+Dialogue: 0,0:00:40.00,0:00:43.00,Default,,0,0,0,,{\t(0,1500,\1c&H00FFFF&\fs54)\t(1500,3000,2,\fs48)}Animated emphasis
+Dialogue: 0,0:00:43.00,0:00:46.00,Default,,0,0,0,,{\clip(100,100,1800,900)}Inside the window
+Dialogue: 0,0:00:46.00,0:00:49.00,Default,,0,0,0,,{\iclip(700,300,1200,700)}Outside the window
+Dialogue: 0,0:00:49.00,0:00:52.00,Default,,0,0,0,,{\clip(m 100 100 l 500 100 500 400 100 400)}Vector window
+Dialogue: 0,0:00:52.00,0:00:55.00,Default,,0,0,0,,{\iclip(2,m 200 200 l 1000 200 1000 800 200 800)}Scaled vector window
+Dialogue: 0,0:00:55.00,0:00:58.00,Default,,0,0,0,,{\k30}Look {\K40}up {\kf50}at {\ko60}the {\kt180\k60}stars.
+Dialogue: 1,0:00:58.00,0:01:01.00,Sign,,0,0,0,,{\an7\pos(100,100)\pbo-5\p1}m 0 0 l 120 0 120 60 0 60 0 0{\p0} Entrance
+Dialogue: 1,0:01:01.00,0:01:04.00,Sign,,0,0,0,,{\p1}m 0 0 b 20 -20 40 20 60 0 n 80 0 l 100 20{\p0} Curves
+Dialogue: 1,0:01:04.00,0:01:07.00,Sign,,0,0,0,,{\p2}m 0 0 s 20 0 40 20 60 0 p 80 20 c{\p0} Spline
+Dialogue: 0,0:01:07.00,0:01:10.00,Default,,0,0,0,,{\q2\a2}Legacy alignment and wrapping{\r}
+Dialogue: 0,0:01:10.00,0:01:13.00,Default,,0,0,0,Banner;20;0;10,An announcement crosses the screen.
+Dialogue: 0,0:01:13.00,0:01:16.00,Default,,0,0,0,Scroll up;0;1080;20;10,Closing credits
+Dialogue: 0,0:01:16.00,0:01:19.00,Default,,0,0,0,Scroll down;0;1080;20;10,Opening credits
+Dialogue: 0,0:01:19.00,0:01:22.00,Default,,0,0,0,,{A production note}The telescope is ready. {\vendor(1,(2,3))}Extension preserved.
+Dialogue: 0,0:01:22.00,0:01:25.00,Default,,0,0,0,,Cafe: café; symbols: ★ — 🌌; literal [brackets], colons: and commas, retained.
+Dialogue: 0,0:01:25.00,0:01:26.00,Default,,0,0,0,,
+
+[Fonts]
+; Encoded syntax fixtures only; these payloads are not usable font files.
+fontname: ExampleSans_0.ttf
+!!!!
+[AAAA]
+fontname: ExampleSerif_0.ttf
+ABCD
+
+[Graphics]
+; Encoded syntax fixture only; this payload is not a usable image.
+filename: observatory.bmp
+!!!!
+[BBBB]
+
+[Parser Test Metadata]
+Purpose: Exercise custom sections and keys
+Note: Values may contain commas, colons: and [brackets]

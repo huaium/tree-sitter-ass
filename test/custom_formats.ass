@@ -1,0 +1,19 @@
+[Script Info]
+Title: Format Mapping Regression Cases
+ScriptType: v4.00+
+
+[V4+ Styles]
+; Reordered fields, an extension column, fractional numbers, and signed colors.
+Format: Fontsize, Name, Fontname, PrimaryColour, Bold, Extra
+Style: 24.5,Default,Arial,&H00FFFFFF,-1,preserved extension
+Style: 32,Sign,Times New Roman,-1,0,
+
+[Events]
+; The Text column remains last and retains all following commas.
+Format: Name, End, Start, Style, Layer, MarginV, MarginL, MarginR, Effect, Extra, Text
+Dialogue: Guide,0:00:04.00,0:00:01.00,Default,0,0020,0010,0010,,custom,Hello, world, again.
+; A replacement Format changes the mapping for subsequent records.
+Format: Start, End, Text
+Dialogue: 0:00:04.00,0:00:07.00,{\pos(100,200)}Coordinates, with commas.
+Comment: 0:00:07.00,0:00:08.00,An empty Text field follows.
+Dialogue: 0:00:08.00,0:00:09.00,

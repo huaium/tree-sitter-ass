@@ -1,0 +1,9 @@
+[Script Info]
+; Minimal metadata-only document, with no styles or events.
+Title: Observatory Metadata
+ScriptType: v4.00+
+PlayResX: 1920
+PlayResY: 1080
+WrapStyle: 0
+ScaledBorderAndShadow: yes
+YCbCr Matrix: TV.709

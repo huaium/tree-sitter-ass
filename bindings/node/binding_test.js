@@ -142,7 +142,7 @@ test("highlighting treats commas inside event Text as string content", () => {
   const textCapture = captures.find((capture) => capture.name === "string" && capture.node.text === text);
   assert.ok(textCapture);
   assert.ok(!captures.some((capture) => capture.name === "punctuation.delimiter" &&
-    capture.node.startIndex >= textCapture.node.startIndex));
+    capture.node.startIndex >= textCapture.node.startIndex + text.indexOf("Hello")));
 });
 
 test("changing Format incrementally updates the following Text boundary", () => {

@@ -1,6 +1,7 @@
 package tree_sitter_ass_test
 
 import (
+	"strings"
 	"testing"
 
 	tree_sitter "github.com/tree-sitter/go-tree-sitter"
@@ -11,6 +12,35 @@ func TestCanLoadGrammar(t *testing.T) {
 	language := tree_sitter.NewLanguage(tree_sitter_ass.Language())
 	if language == nil {
 		t.Errorf("Error loading Ass grammar")
+	}
+}
+
+func TestStructuredSubtitleSyntax(t *testing.T) {
+	parser := tree_sitter.NewParser()
+	defer parser.Close()
+	if err := parser.SetLanguage(tree_sitter.NewLanguage(tree_sitter_ass.Language())); err != nil {
+		t.Fatal(err)
+	}
+	source := []byte("[V4+ Styles]\nFormat: Name, Fontsize\nStyle:Default,20\n" +
+		"[Events]\nFormat: Start, End, Text\n" +
+		"Dialogue:0:00:01.00,0:00:02.00,{\\p1}m 0 0 l 10 10{\\p0}{\\t(0,500,\\fs30)}text\\Nnext\n")
+	tree := parser.Parse(source, nil)
+	if tree == nil {
+		t.Fatal("Parser returned no tree")
+	}
+	defer tree.Close()
+	root := tree.RootNode()
+	if root.HasError() {
+		t.Fatal(root.ToSexp())
+	}
+	syntax := root.ToSexp()
+	if strings.Count(syntax, "(timestamp)") != 2 {
+		t.Fatalf("Expected two typed timestamps: %s", syntax)
+	}
+	for _, node := range []string{"font_size: (number)", "(drawing_line", "(transform_tag", "(escape_sequence)"} {
+		if !strings.Contains(syntax, node) {
+			t.Fatalf("Missing %s: %s", node, syntax)
+		}
 	}
 }
 

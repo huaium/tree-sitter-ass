@@ -47,9 +47,6 @@ zig-out/
 *.tgz
 *.zip
 
-# Test
-test/
-
 # Zed
 .zed/
 

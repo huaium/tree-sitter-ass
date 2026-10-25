@@ -4,6 +4,7 @@
 #include <stdint.h>
 #include <stdlib.h>
 #include <string.h>
+#include "fields.h"
 
 enum TokenType {
   SECTION_START,
@@ -11,24 +12,55 @@ enum TokenType {
   EVENT_FORMAT_KEY,
   EVENT_DIALOGUE_KEY,
   EVENT_COMMENT_KEY,
-  EVENT_FIELD,
   EVENT_SEPARATOR,
-  EVENT_TEXT,
   FONTS_SECTION_NAME,
   GRAPHICS_SECTION_NAME,
   FONT_ATTACHMENT_KEY,
   GRAPHICS_ATTACHMENT_KEY,
   ATTACHMENT_DATA,
+  STYLES_SECTION_NAME,
+  STYLE_KEY,
+  SCRIPT_TYPE_KEY,
+  EVENT_PICTURE_KEY,
+  EVENT_SOUND_KEY,
+  EVENT_MOVIE_KEY,
+  EVENT_COMMAND_KEY,
+  TEXT_START,
+  TEXT_END,
+  RECORD_END,
+  TEXT_CHUNK,
+  ESCAPE_SEQUENCE,
+  OVERRIDE_START,
+  OVERRIDE_END,
+  DRAWING_MODE_TAG,
+  CLIP_NAME,
+  CLIP_END,
+  TRANSFORM_START,
+  TRANSFORM_END,
+  DRAW_MOVE,
+  DRAW_MOVE_OPEN,
+  DRAW_LINE,
+  DRAW_BEZIER,
+  DRAW_SPLINE,
+  DRAW_EXTEND,
+  DRAW_CLOSE,
+  END_OF_FILE,
+#define ASS_FIELD_TOKEN(name) FIELD_TOKEN_##name,
+  ASS_FIELDS(ASS_FIELD_TOKEN)
+#undef ASS_FIELD_TOKEN
   ERROR_SENTINEL,
 };
 
+static bool ass_horizontal_space(int32_t character);
+static int32_t ass_lowercase(int32_t character);
+static bool ass_match_word(TSLexer *lexer, const char *word);
+#include "syntax.h"
+
 typedef struct {
-  uint32_t fields_before_text;
-  uint32_t remaining_fields;
   bool in_events;
-  bool in_event_values;
   uint8_t attachment_kind;
   bool attachment_started;
+  AssSyntax syntax;
 } AssScanner;
 
 enum AttachmentKind { NO_ATTACHMENT, FONT_ATTACHMENT, GRAPHICS_ATTACHMENT };
@@ -50,39 +82,18 @@ static bool ass_match_word(TSLexer *lexer, const char *word) {
 }
 
 // Inspect the format after the key, leaving mark_end at the end of the key.
-static void ass_read_format(AssScanner *scanner, TSLexer *lexer) {
-  uint32_t index = 0;
-  lexer->advance(lexer, false); // colon
-  for (;;) {
-    while (ass_horizontal_space(lexer->lookahead)) lexer->advance(lexer, false);
-    char name[4] = {0};
-    uint32_t length = 0;
-    uint32_t trimmed_length = 0;
-    while (!lexer->eof(lexer) && lexer->lookahead != ',' &&
-           lexer->lookahead != '\r' && lexer->lookahead != '\n') {
-      if (length < sizeof(name) && lexer->lookahead < 128) {
-        name[length] = (char)ass_lowercase(lexer->lookahead);
-      }
-      length++;
-      if (!ass_horizontal_space(lexer->lookahead)) trimmed_length = length;
-      lexer->advance(lexer, false);
-    }
-    if (lexer->lookahead != ',') {
-      if (trimmed_length == 4 && memcmp(name, "text", 4) == 0) {
-        scanner->fields_before_text = index;
-      }
-      return;
-    }
-    index++;
-    lexer->advance(lexer, false);
-  }
-}
-
 static void ass_start_section(AssScanner *scanner) {
   scanner->in_events = false;
-  scanner->in_event_values = false;
   scanner->attachment_kind = NO_ATTACHMENT;
   scanner->attachment_started = false;
+  scanner->syntax.in_styles = false;
+  scanner->syntax.record = NO_RECORD;
+  scanner->syntax.field_started = false;
+  scanner->syntax.in_text = false;
+  scanner->syntax.in_override = false;
+  scanner->syntax.drawing = false;
+  scanner->syntax.in_clip = false;
+  scanner->syntax.transform_depth = 0;
 }
 
 static bool ass_scan_attachment(AssScanner *scanner, TSLexer *lexer, const bool *valid_symbols) {
@@ -169,37 +180,17 @@ static bool ass_scan(AssScanner *scanner, TSLexer *lexer, const bool *valid_symb
     return true;
   }
 
-  if (scanner->in_event_values) {
-    if (valid_symbols[EVENT_FIELD] && scanner->remaining_fields > 0) {
-      while (!lexer->eof(lexer) && lexer->lookahead != ',' &&
-             lexer->lookahead != '\r' && lexer->lookahead != '\n') {
-        lexer->advance(lexer, false);
-      }
-      if (lexer->lookahead != ',') return false;
-      lexer->mark_end(lexer);
-      scanner->remaining_fields--;
-      lexer->result_symbol = EVENT_FIELD;
-      return true;
-    }
-    if (valid_symbols[EVENT_SEPARATOR] && lexer->lookahead == ',') {
-      lexer->advance(lexer, false);
-      lexer->mark_end(lexer);
-      lexer->result_symbol = EVENT_SEPARATOR;
-      return true;
-    }
-    if (valid_symbols[EVENT_TEXT] && scanner->remaining_fields == 0) {
-      while (!lexer->eof(lexer) && lexer->lookahead != '\r' && lexer->lookahead != '\n') {
-        lexer->advance(lexer, false);
-      }
-      lexer->mark_end(lexer);
-      scanner->in_event_values = false;
-      lexer->result_symbol = EVENT_TEXT;
-      return true;
-    }
+  if (valid_symbols[END_OF_FILE] && lexer->eof(lexer)) {
+    lexer->mark_end(lexer);
+    lexer->result_symbol = END_OF_FILE;
+    return true;
+  }
+  if (scanner->syntax.record != NO_RECORD && ass_syntax_tokens_valid(valid_symbols)) {
+    return ass_scan_syntax(&scanner->syntax, lexer, valid_symbols);
   }
 
   if (valid_symbols[EVENTS_SECTION_NAME] || valid_symbols[FONTS_SECTION_NAME] ||
-      valid_symbols[GRAPHICS_SECTION_NAME]) {
+      valid_symbols[GRAPHICS_SECTION_NAME] || valid_symbols[STYLES_SECTION_NAME]) {
     while (ass_horizontal_space(lexer->lookahead)) lexer->advance(lexer, false);
     enum TokenType symbol;
     const char *name;
@@ -207,13 +198,23 @@ static bool ass_scan(AssScanner *scanner, TSLexer *lexer, const bool *valid_symb
       case 'e': symbol = EVENTS_SECTION_NAME; name = "events"; break;
       case 'f': symbol = FONTS_SECTION_NAME; name = "fonts"; break;
       case 'g': symbol = GRAPHICS_SECTION_NAME; name = "graphics"; break;
+      case 'v': symbol = STYLES_SECTION_NAME; name = "v4"; break;
       default: return false;
     }
     if (!valid_symbols[symbol] || !ass_match_word(lexer, name)) return false;
+    if (symbol == STYLES_SECTION_NAME) {
+      scanner->syntax.legacy = lexer->lookahead != '+';
+      if (lexer->lookahead == '+') lexer->advance(lexer, false);
+      if (!ass_horizontal_space(lexer->lookahead)) return false;
+      while (ass_horizontal_space(lexer->lookahead)) lexer->advance(lexer, false);
+      if (!ass_match_word(lexer, "styles")) return false;
+      ass_default_formats(&scanner->syntax);
+    }
     while (ass_horizontal_space(lexer->lookahead)) lexer->advance(lexer, false);
     if (lexer->lookahead != ']') return false;
     lexer->mark_end(lexer);
     scanner->in_events = symbol == EVENTS_SECTION_NAME;
+    scanner->syntax.in_styles = symbol == STYLES_SECTION_NAME;
     scanner->attachment_kind = symbol == FONTS_SECTION_NAME ? FONT_ATTACHMENT
       : symbol == GRAPHICS_SECTION_NAME ? GRAPHICS_ATTACHMENT : NO_ATTACHMENT;
     lexer->result_symbol = symbol;
@@ -236,25 +237,59 @@ static bool ass_scan(AssScanner *scanner, TSLexer *lexer, const bool *valid_symb
     lexer->result_symbol = SECTION_START;
     return true;
   }
-  if (!scanner->in_events) return false;
+  if (valid_symbols[SCRIPT_TYPE_KEY] && ass_lowercase(lexer->lookahead) == 's' &&
+      !scanner->syntax.in_styles && !scanner->in_events) {
+    if (!ass_match_word(lexer, "script")) return false;
+    while (ass_horizontal_space(lexer->lookahead)) lexer->advance(lexer, false);
+    if (!ass_match_word(lexer, "type")) return false;
+    lexer->mark_end(lexer);
+    while (ass_horizontal_space(lexer->lookahead)) lexer->advance(lexer, false);
+    if (lexer->lookahead != ':') return false;
+    lexer->advance(lexer, false);
+    while (ass_horizontal_space(lexer->lookahead)) lexer->advance(lexer, false);
+    if (ass_match_word(lexer, "v4.00")) {
+      scanner->syntax.legacy = lexer->lookahead != '+';
+      ass_default_formats(&scanner->syntax);
+    }
+    lexer->result_symbol = SCRIPT_TYPE_KEY;
+    return true;
+  }
+  if (!scanner->in_events && !scanner->syntax.in_styles) return false;
 
   enum TokenType symbol;
   const char *word;
   switch (ass_lowercase(lexer->lookahead)) {
     case 'f': symbol = EVENT_FORMAT_KEY; word = "format"; break;
     case 'd': symbol = EVENT_DIALOGUE_KEY; word = "dialogue"; break;
-    case 'c': symbol = EVENT_COMMENT_KEY; word = "comment"; break;
+    case 'c':
+      if (!ass_match_word(lexer, "comm")) return false;
+      if (ass_lowercase(lexer->lookahead) == 'e') { symbol = EVENT_COMMENT_KEY; word = "ent"; }
+      else { symbol = EVENT_COMMAND_KEY; word = "and"; }
+      break;
+    case 's':
+      symbol = scanner->in_events ? EVENT_SOUND_KEY : STYLE_KEY;
+      word = scanner->in_events ? "sound" : "style";
+      break;
+    case 'p': symbol = EVENT_PICTURE_KEY; word = "picture"; break;
+    case 'm': symbol = EVENT_MOVIE_KEY; word = "movie"; break;
     default: return false;
   }
   if (!valid_symbols[symbol] || !ass_match_word(lexer, word)) return false;
+  if (symbol == STYLE_KEY && !scanner->syntax.in_styles) return false;
+  if (symbol != STYLE_KEY && symbol != EVENT_FORMAT_KEY && !scanner->in_events) return false;
   lexer->mark_end(lexer);
   while (ass_horizontal_space(lexer->lookahead)) lexer->advance(lexer, false);
   if (lexer->lookahead != ':') return false;
   if (symbol == EVENT_FORMAT_KEY) {
-    ass_read_format(scanner, lexer);
+    ass_read_typed_format(&scanner->syntax, lexer);
   } else {
-    scanner->remaining_fields = scanner->fields_before_text;
-    scanner->in_event_values = true;
+    scanner->syntax.record = symbol == STYLE_KEY ? STYLE_RECORD : EVENT_RECORD;
+    scanner->syntax.index = 0;
+    scanner->syntax.field_started = false;
+    scanner->syntax.in_text = false;
+    scanner->syntax.in_override = false;
+    scanner->syntax.in_clip = false;
+    scanner->syntax.transform_depth = 0;
   }
   lexer->result_symbol = symbol;
   return true;
@@ -263,7 +298,7 @@ static bool ass_scan(AssScanner *scanner, TSLexer *lexer, const bool *valid_symb
 void *tree_sitter_ass_external_scanner_create(void) {
   AssScanner *scanner = calloc(1, sizeof(AssScanner));
   assert(scanner);
-  scanner->fields_before_text = 9;
+  ass_default_formats(&scanner->syntax);
   return scanner;
 }
 
@@ -273,31 +308,22 @@ void tree_sitter_ass_external_scanner_destroy(void *payload) {
 
 unsigned tree_sitter_ass_external_scanner_serialize(void *payload, char *buffer) {
   const AssScanner *scanner = payload;
-  for (unsigned i = 0; i < 4; i++) {
-    buffer[i] = (char)(scanner->fields_before_text >> (i * 8));
-    buffer[i + 4] = (char)(scanner->remaining_fields >> (i * 8));
-  }
-  buffer[8] = scanner->in_events;
-  buffer[9] = scanner->in_event_values;
-  buffer[10] = scanner->attachment_kind;
-  buffer[11] = scanner->attachment_started;
-  return 12;
+  buffer[0] = scanner->in_events;
+  buffer[1] = scanner->attachment_kind;
+  buffer[2] = scanner->attachment_started;
+  return 3 + ass_syntax_serialize(&scanner->syntax, buffer + 3);
 }
 
 void tree_sitter_ass_external_scanner_deserialize(void *payload, const char *buffer, unsigned length) {
   AssScanner *scanner = payload;
-  *scanner = (AssScanner){.fields_before_text = 9};
+  *scanner = (AssScanner){0};
+  ass_default_formats(&scanner->syntax);
   if (length == 0) return;
-  assert(length == 12);
-  scanner->fields_before_text = 0;
-  for (unsigned i = 0; i < 4; i++) {
-    scanner->fields_before_text |= (uint32_t)(uint8_t)buffer[i] << (i * 8);
-    scanner->remaining_fields |= (uint32_t)(uint8_t)buffer[i + 4] << (i * 8);
-  }
-  scanner->in_events = buffer[8];
-  scanner->in_event_values = buffer[9];
-  scanner->attachment_kind = (uint8_t)buffer[10];
-  scanner->attachment_started = buffer[11];
+  assert(length == 3 + ASS_SYNTAX_SERIALIZED_SIZE);
+  scanner->in_events = buffer[0];
+  scanner->attachment_kind = (uint8_t)buffer[1];
+  scanner->attachment_started = buffer[2];
+  ass_syntax_deserialize(&scanner->syntax, buffer + 3);
 }
 
 bool tree_sitter_ass_external_scanner_scan(void *payload, TSLexer *lexer, const bool *valid_symbols) {

@@ -10,6 +10,26 @@ final class TreeSitterAssTests: XCTestCase {
                          "Error loading Ass grammar")
     }
 
+    func testStructuredSubtitleSyntax() throws {
+        let language = Language(language: tree_sitter_ass())
+        let parser = Parser()
+        try parser.setLanguage(language)
+        let source = "[V4+ Styles]\nFormat: Name, Fontsize\nStyle:Default,20\n" +
+            "[Events]\nFormat: Start, End, Text\n" +
+            "Dialogue:0:00:01.00,0:00:02.00,{\\p1}m 0 0 l 10 10{\\p0}{\\t(0,500,\\fs30)}text\\Nnext\n"
+        let tree = try XCTUnwrap(parser.parse(source))
+        XCTAssertFalse(try XCTUnwrap(tree.rootNode).hasError)
+        let query = try Query(language: language, data: Data(
+            ("(timestamp) @time (value font_size: (number)) @size " +
+             "(drawing_line) @drawing (transform_tag) @transform (escape_sequence) @escape").utf8
+        ))
+        let captures = query.execute(in: tree).flatMap { $0.captures }
+        XCTAssertEqual(captures.filter { $0.name == "time" }.count, 2)
+        for name in ["size", "drawing", "transform", "escape"] {
+            XCTAssertEqual(captures.filter { $0.name == name }.count, 1, name)
+        }
+    }
+
     func testSubtitleVariantsAndErrors() throws {
         let parser = Parser()
         try parser.setLanguage(Language(language: tree_sitter_ass()))

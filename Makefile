@@ -49,6 +49,8 @@ endif
 
 all: lib$(LANGUAGE_NAME).a lib$(LANGUAGE_NAME).$(SOEXT) $(LANGUAGE_NAME).pc
 
+$(OBJS): $(wildcard $(SRC_DIR)/*.h) $(wildcard $(SRC_DIR)/tree_sitter/*.h)
+
 lib$(LANGUAGE_NAME).a: $(OBJS)
 	$(AR) $(ARFLAGS) $@ $^
 

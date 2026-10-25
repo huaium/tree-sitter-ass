@@ -16,6 +16,8 @@ fn main() {
         c_config.file(&scanner_path);
         println!("cargo:rerun-if-changed={}", scanner_path.to_str().unwrap());
     }
+    println!("cargo:rerun-if-changed=src/fields.h");
+    println!("cargo:rerun-if-changed=src/syntax.h");
 
     c_config.compile("tree-sitter-ass");
 }
