@@ -27,7 +27,10 @@
     "bindings/node/*",
     "queries/*",
     "docs/*",
-    "src/**",
+    "src/*.c",
+    "src/*.h",
+    "src/*.json",
+    "src/tree_sitter/*.h",
     "test/*.ass",
     "test/*.ssa",
     "*.wasm"
