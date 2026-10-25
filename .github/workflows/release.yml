@@ -16,13 +16,13 @@ jobs:
     if: github.event.deleted == false
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
         with:
           persist-credentials: false
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@v7
         with:
           node-version: "24"
-      - uses: astral-sh/setup-uv@v6
+      - uses: astral-sh/setup-uv@v10
       - name: Check release version
         env:
           RELEASE_TAG: ${{ github.ref_name }}
@@ -58,7 +58,7 @@ jobs:
           uv build --sdist
           git archive --format=tar.gz --prefix="tree-sitter-ass-${RELEASE_TAG}/" --output="dist/tree-sitter-ass-${RELEASE_TAG}-source.tar.gz" HEAD
           cp queries/highlights.scm dist/highlights.scm
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v7
         with:
           name: source-packages
           path: dist/*
@@ -72,17 +72,17 @@ jobs:
         os: [ubuntu-latest, macos-latest, windows-latest]
     runs-on: ${{ matrix.os }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
         with:
           persist-credentials: false
-      - uses: astral-sh/setup-uv@v6
+      - uses: astral-sh/setup-uv@v10
       - name: Build and test wheels
         run: uvx cibuildwheel==3.2.1 --output-dir dist
         env:
           CIBW_ARCHS: auto64
           CIBW_TEST_REQUIRES: tree-sitter>=0.26,<0.27
           CIBW_TEST_COMMAND: python -m unittest discover -s "{project}/bindings/python/tests" -v
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v7
         with:
           name: wheels-${{ matrix.os }}
           path: dist/*.whl
@@ -94,7 +94,7 @@ jobs:
     permissions:
       contents: write
     steps:
-      - uses: actions/download-artifact@v4
+      - uses: actions/download-artifact@v8
         with:
           path: dist
           merge-multiple: true
