@@ -98,4 +98,21 @@ mod tests {
         assert_eq!(values.named_child(1).unwrap().utf8_text(source.as_bytes()).unwrap(),
                    "{\\pos(100,200)}Hello, world");
     }
+
+    #[test]
+    fn test_embedded_attachments() {
+        let mut parser = tree_sitter::Parser::new();
+        parser.set_language(&super::LANGUAGE.into()).unwrap();
+        for source in [
+            "[Fonts]\nfontname: font.ttf\n!!!!\n[AAAA]",
+            "[Graphics]\nfilename: image.bmp\n!!!!\n[AAAA]",
+        ] {
+            let tree = parser.parse(source, None).unwrap();
+            let root = tree.root_node();
+            assert!(!root.has_error(), "{}", root.to_sexp());
+            let section = root.named_child(0).unwrap();
+            assert_eq!(section.named_child(2).unwrap().kind(), "attachment_data");
+            assert_eq!(section.named_child(3).unwrap().utf8_text(source.as_bytes()).unwrap(), "[AAAA]");
+        }
+    }
 }

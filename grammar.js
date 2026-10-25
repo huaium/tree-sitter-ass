@@ -63,11 +63,16 @@ function sectionRules($, words) {
   );
 
   // 2. For each words
+  const scannedSections = {
+    Events: $._events_section_name,
+    Fonts: $._fonts_section_name,
+    Graphics: $._graphics_section_name,
+  };
   words.forEach((word) =>
     rules.push(
       field(
         `section_name_${toLowerCaseUnderscored(word)}`,
-        alias(word === "Events" ? $._events_section_name : token.immediate(caseInsensitive(word)), $.section_name),
+        alias(scannedSections[word] ?? token.immediate(caseInsensitive(word)), $.section_name),
       ),
     ),
   );
@@ -163,6 +168,11 @@ module.exports = grammar({
     $._event_field,
     $._event_separator,
     $._event_text,
+    $._fonts_section_name,
+    $._graphics_section_name,
+    $._font_attachment_key,
+    $._graphics_attachment_key,
+    $.attachment_data,
     $._error_sentinel,
   ],
 
@@ -172,7 +182,7 @@ module.exports = grammar({
     section: ($) =>
       seq(
         $.section_header,
-        optional(repeat1(choice($.comment, $.key_value_pair))),
+        optional(repeat1(choice($.comment, $.key_value_pair, $.attachment_data))),
       ),
 
     // Section header
@@ -197,6 +207,16 @@ module.exports = grammar({
     // Key value pair
     key_value_pair: ($) =>
       choice(
+        seq(
+          field("key_fontname", alias($._font_attachment_key, $.key)),
+          ":",
+          field("values_fontname", $.values),
+        ),
+        seq(
+          field("key_filename", alias($._graphics_attachment_key, $.key)),
+          ":",
+          field("values_filename", $.values),
+        ),
         seq(
           field("key_format", alias($._event_format_key, $.key)),
           ":",

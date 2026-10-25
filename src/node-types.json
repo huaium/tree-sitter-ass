@@ -574,6 +574,10 @@
       "required": true,
       "types": [
         {
+          "type": "attachment_data",
+          "named": true
+        },
+        {
           "type": "comment",
           "named": true
         },
@@ -700,6 +704,10 @@
   {
     "type": "]",
     "named": false
+  },
+  {
+    "type": "attachment_data",
+    "named": true
   },
   {
     "type": "comment",

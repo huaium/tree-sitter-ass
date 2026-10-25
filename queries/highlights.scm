@@ -2,6 +2,7 @@
 (comment) @comment
 (key) @property
 (value) @string
+(attachment_data) @string
 [
   "["
   "]"

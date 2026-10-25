@@ -31,6 +31,10 @@
                   {
                     "type": "SYMBOL",
                     "name": "key_value_pair"
+                  },
+                  {
+                    "type": "SYMBOL",
+                    "name": "attachment_data"
                   }
                 ]
               }
@@ -130,11 +134,8 @@
           "content": {
             "type": "ALIAS",
             "content": {
-              "type": "IMMEDIATE_TOKEN",
-              "content": {
-                "type": "PATTERN",
-                "value": "[fF][oO][nN][tT][sS]"
-              }
+              "type": "SYMBOL",
+              "name": "_fonts_section_name"
             },
             "named": true,
             "value": "section_name"
@@ -146,11 +147,8 @@
           "content": {
             "type": "ALIAS",
             "content": {
-              "type": "IMMEDIATE_TOKEN",
-              "content": {
-                "type": "PATTERN",
-                "value": "[gG][rR][aA][pP][hH][iI][cC][sS]"
-              }
+              "type": "SYMBOL",
+              "name": "_graphics_section_name"
             },
             "named": true,
             "value": "section_name"
@@ -206,6 +204,66 @@
     "key_value_pair": {
       "type": "CHOICE",
       "members": [
+        {
+          "type": "SEQ",
+          "members": [
+            {
+              "type": "FIELD",
+              "name": "key_fontname",
+              "content": {
+                "type": "ALIAS",
+                "content": {
+                  "type": "SYMBOL",
+                  "name": "_font_attachment_key"
+                },
+                "named": true,
+                "value": "key"
+              }
+            },
+            {
+              "type": "STRING",
+              "value": ":"
+            },
+            {
+              "type": "FIELD",
+              "name": "values_fontname",
+              "content": {
+                "type": "SYMBOL",
+                "name": "values"
+              }
+            }
+          ]
+        },
+        {
+          "type": "SEQ",
+          "members": [
+            {
+              "type": "FIELD",
+              "name": "key_filename",
+              "content": {
+                "type": "ALIAS",
+                "content": {
+                  "type": "SYMBOL",
+                  "name": "_graphics_attachment_key"
+                },
+                "named": true,
+                "value": "key"
+              }
+            },
+            {
+              "type": "STRING",
+              "value": ":"
+            },
+            {
+              "type": "FIELD",
+              "name": "values_filename",
+              "content": {
+                "type": "SYMBOL",
+                "name": "values"
+              }
+            }
+          ]
+        },
         {
           "type": "SEQ",
           "members": [
@@ -1281,6 +1339,26 @@
     {
       "type": "SYMBOL",
       "name": "_event_text"
+    },
+    {
+      "type": "SYMBOL",
+      "name": "_fonts_section_name"
+    },
+    {
+      "type": "SYMBOL",
+      "name": "_graphics_section_name"
+    },
+    {
+      "type": "SYMBOL",
+      "name": "_font_attachment_key"
+    },
+    {
+      "type": "SYMBOL",
+      "name": "_graphics_attachment_key"
+    },
+    {
+      "type": "SYMBOL",
+      "name": "attachment_data"
     },
     {
       "type": "SYMBOL",

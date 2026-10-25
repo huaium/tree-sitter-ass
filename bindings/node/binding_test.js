@@ -10,6 +10,77 @@ test("can load grammar", () => {
   assert.doesNotThrow(() => parser.setLanguage(require(".")));
 });
 
+test("font and graphics attachment bodies preserve encoded lines", () => {
+  const parser = new Parser();
+  const language = require(".");
+  parser.setLanguage(language);
+  const query = new Parser.Query(language, readFileSync(
+    join(__dirname, "../../queries/highlights.scm"), "utf8",
+  ));
+  const encoded = Array.from({ length: 64 }, (_, index) => String.fromCharCode(index + 33)).join("");
+  const lines = [encoded, "[!!!!", "[AAAA]", "[!!!]!!!!", "]!!!!", ";!!!!", "!:!!!!", "AB:CD,EF", "!".repeat(80)];
+  for (const [section, key, extension] of [["Fonts", "fontname", "ttf"], ["Graphics", "filename", "bmp"]]) {
+    for (const newline of ["\n", "\r\n", "\r"]) {
+      const source = [
+        `[${section}]`, `${key}: first.${extension}`, ...lines,
+        `${key.toUpperCase()}: SECOND.${extension.toUpperCase()}`, "!!!!",
+        "[Events]", "Format: Layer, Text", "Dialogue:0,Hello, world",
+      ].join(newline);
+      const root = parser.parse(source).rootNode;
+      assert.strictEqual(root.hasError, false, root.toString());
+      assert.strictEqual(root.namedChildCount, 2);
+      const attachmentSection = root.namedChild(0);
+      assert.deepStrictEqual(attachmentSection.descendantsOfType("attachment_data").map((node) => node.text), [...lines, "!!!!"]);
+      assert.strictEqual(attachmentSection.descendantsOfType("key_value_pair").length, 2);
+      const captures = query.captures(attachmentSection);
+      assert.ok(!captures.some((capture) => capture.name === "comment"));
+      for (const line of lines) {
+        assert.ok(captures.some((capture) => capture.name === "string" && capture.node.text === line), line);
+      }
+      const dialogue = root.namedChild(1).lastNamedChild.childForFieldName("values_dialogue");
+      assert.strictEqual(dialogue.lastNamedChild.text, "Hello, world");
+    }
+  }
+});
+
+test("attachment data requires a declaration in its matching section", () => {
+  const parser = new Parser();
+  parser.setLanguage(require("."));
+  for (const source of [
+    "[Script Info]\n!!!!",
+    "[Fonts]\n!!!!",
+    "[Graphics]\n!!!!",
+    "[Fonts]\nfilename: image.bmp\n!!!!",
+    "[Graphics]\nfontname: font.ttf\n!!!!",
+  ]) {
+    const root = parser.parse(source).rootNode;
+    assert.strictEqual(root.hasError, true, source);
+    assert.strictEqual(root.descendantsOfType("attachment_data").length, 0);
+  }
+  for (const [section, key] of [["Fonts", "fontname"], ["Graphics", "filename"]]) {
+    const root = parser.parse(`[${section}]\n${key}: attachment\n!!!!`).rootNode;
+    assert.strictEqual(root.hasError, false);
+    assert.strictEqual(root.descendantsOfType("attachment_data")[0].text, "!!!!");
+  }
+});
+
+test("incremental section edits invalidate attachment scanner state", () => {
+  const parser = new Parser();
+  parser.setLanguage(require("."));
+  const before = "[Fonts]\nfontname: font.ttf\n!!!!\n[Events]\nFormat: Layer, Text\nDialogue:0,Hello, world\n";
+  const tree = parser.parse(before);
+  tree.edit({
+    startIndex: 1, oldEndIndex: 6, newEndIndex: 6,
+    startPosition: { row: 0, column: 1 }, oldEndPosition: { row: 0, column: 6 }, newEndPosition: { row: 0, column: 6 },
+  });
+  const after = before.replace("Fonts", "Other");
+  const incremental = parser.parse(after, tree);
+  const fresh = parser.parse(after);
+  assert.strictEqual(incremental.rootNode.hasError, true);
+  assert.strictEqual(incremental.rootNode.toString(), fresh.rootNode.toString());
+  assert.strictEqual(incremental.rootNode.descendantsOfType("attachment_data").length, 0);
+});
+
 test("event Text preserves commas and override tags for declared formats", () => {
   const parser = new Parser();
   parser.setLanguage(require("."));

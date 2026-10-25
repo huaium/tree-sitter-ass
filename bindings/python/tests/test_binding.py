@@ -49,6 +49,16 @@ class TestLanguage(TestCase):
         for name, text in [("type", b"Script Info"), ("property", b"Title"), ("string", b" Example")]:
             self.assertIn(text, [node.text for node in captures[name]])
 
+    def test_embedded_attachments(self):
+        for section, key in [("Fonts", "fontname"), ("Graphics", "filename")]:
+            with self.subTest(section=section):
+                source = f"[{section}]\n{key}: attachment\n!!!!\n[AAAA]".encode()
+                root = self.parser.parse(source).root_node
+                self.assertFalse(root.has_error, str(root))
+                body = root.named_children[0].named_children[2:]
+                self.assertEqual([node.type for node in body], ["attachment_data", "attachment_data"])
+                self.assertEqual([node.text for node in body], [b"!!!!", b"[AAAA]"])
+
     def test_incremental_edit_matches_fresh_parse(self):
         source = b"[Script Info]\nTitle: Example\n"
         start = source.index(b"Example")
