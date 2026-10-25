@@ -6,6 +6,8 @@ project(tree-sitter-ass
         HOMEPAGE_URL "https://github.com/huaium/tree-sitter-ass"
         LANGUAGES C)
 
+include(GNUInstallDirs)
+
 option(BUILD_SHARED_LIBS "Build using shared libraries" ON)
 option(TREE_SITTER_REUSE_ALLOCATOR "Reuse the library allocator" OFF)
 
@@ -46,8 +48,6 @@ set_target_properties(tree-sitter-ass
 
 configure_file(bindings/c/tree-sitter-ass.pc.in
                "${CMAKE_CURRENT_BINARY_DIR}/tree-sitter-ass.pc" @ONLY)
-
-include(GNUInstallDirs)
 
 install(DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/bindings/c/tree_sitter"
         DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}"
