@@ -33,6 +33,19 @@ For Python development, install the project and runtime with `uv sync --extra co
 Run the Python binding tests with
 `uv run --no-sync python -m unittest discover -s bindings/python/tests -v`.
 
+Update the package version across all manifests, local package lock entries, C
+build metadata, and the generated parser with:
+
+```sh
+make version NEW_VERSION=0.2.0
+```
+
+This uses uv, Python 3.11 or newer, pnpm, and the existing local Tree-sitter CLI.
+Use a release version in `MAJOR.MINOR.PATCH` form, with each component at most
+255 to fit Tree-sitter's metadata. Dependency runtime versions stay unchanged.
+Go and Swift package releases use Git tags; this command does not create a tag
+or commit.
+
 ## References
 
 - [ASS Specs](http://www.tcax.org/docs/ass-specs.htm)

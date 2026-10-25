@@ -4,12 +4,13 @@ endif
 
 LANGUAGE_NAME := tree-sitter-ass
 HOMEPAGE_URL := https://github.com/huaium/tree-sitter-ass
-VERSION := 0.1.0
+VERSION := 0.1.1
 
 # repository
 SRC_DIR := src
 
 TS ?= tree-sitter
+export NEW_VERSION
 
 # install directory layout
 PREFIX ?= /usr/local
@@ -60,7 +61,7 @@ ifneq ($(STRIP),)
 	$(STRIP) $@
 endif
 
-$(LANGUAGE_NAME).pc: bindings/c/$(LANGUAGE_NAME).pc.in
+$(LANGUAGE_NAME).pc: bindings/c/$(LANGUAGE_NAME).pc.in Makefile
 	sed -e 's|@PROJECT_VERSION@|$(VERSION)|' \
 		-e 's|@CMAKE_INSTALL_LIBDIR@|$(LIBDIR:$(PREFIX)/%=%)|' \
 		-e 's|@CMAKE_INSTALL_INCLUDEDIR@|$(INCLUDEDIR:$(PREFIX)/%=%)|' \
@@ -96,4 +97,8 @@ clean:
 test:
 	$(TS) test
 
-.PHONY: all install uninstall clean test
+version:
+	uv run --no-project --offline python scripts/set_version.py
+	pnpm exec tree-sitter generate
+
+.PHONY: all install uninstall clean test version
