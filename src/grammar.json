@@ -2773,6 +2773,15 @@
               {
                 "type": "SYMBOL",
                 "name": "override_comment"
+              },
+              {
+                "type": "ALIAS",
+                "content": {
+                  "type": "SYMBOL",
+                  "name": "_ignored_backslash"
+                },
+                "named": true,
+                "value": "override_comment"
               }
             ]
           }
@@ -3769,8 +3778,31 @@
         {
           "type": "REPEAT1",
           "content": {
-            "type": "SYMBOL",
-            "name": "_override_tag"
+            "type": "CHOICE",
+            "members": [
+              {
+                "type": "SYMBOL",
+                "name": "_override_tag"
+              },
+              {
+                "type": "ALIAS",
+                "content": {
+                  "type": "SYMBOL",
+                  "name": "_transform_comment"
+                },
+                "named": true,
+                "value": "override_comment"
+              },
+              {
+                "type": "ALIAS",
+                "content": {
+                  "type": "SYMBOL",
+                  "name": "_ignored_backslash"
+                },
+                "named": true,
+                "value": "override_comment"
+              }
+            ]
           }
         },
         {
@@ -3783,6 +3815,17 @@
           "value": ")"
         }
       ]
+    },
+    "_transform_comment": {
+      "type": "TOKEN",
+      "content": {
+        "type": "PREC",
+        "value": -1,
+        "content": {
+          "type": "PATTERN",
+          "value": "[^\\\\)}\\r\\n]+"
+        }
+      }
     },
     "clip_tag": {
       "type": "SEQ",
@@ -3955,15 +3998,8 @@
             "content": {
               "type": "ALIAS",
               "content": {
-                "type": "IMMEDIATE_TOKEN",
-                "content": {
-                  "type": "PREC",
-                  "value": -2,
-                  "content": {
-                    "type": "PATTERN",
-                    "value": "[A-Za-z][A-Za-z0-9]*"
-                  }
-                }
+                "type": "SYMBOL",
+                "name": "_unknown_tag_name"
               },
               "named": true,
               "value": "tag_name"
@@ -4396,6 +4432,14 @@
     {
       "type": "SYMBOL",
       "name": "_eof"
+    },
+    {
+      "type": "SYMBOL",
+      "name": "_unknown_tag_name"
+    },
+    {
+      "type": "SYMBOL",
+      "name": "_ignored_backslash"
     },
     {
       "type": "SYMBOL",

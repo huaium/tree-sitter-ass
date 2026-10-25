@@ -1348,6 +1348,10 @@
           "named": true
         },
         {
+          "type": "override_comment",
+          "named": true
+        },
+        {
           "type": "position_tag",
           "named": true
         },

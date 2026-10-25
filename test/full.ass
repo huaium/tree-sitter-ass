@@ -55,6 +55,10 @@ Dialogue: 0,0:01:16.00,0:01:19.00,Default,,0,0,0,Scroll down;0;1080;20;10,Openin
 Dialogue: 0,0:01:19.00,0:01:22.00,Default,,0,0,0,,{A production note}The telescope is ready. {\vendor(1,(2,3))}Extension preserved.
 Dialogue: 0,0:01:22.00,0:01:25.00,Default,,0,0,0,,Cafe: café; symbols: ★ — 🌌; literal [brackets], colons: and commas, retained.
 Dialogue: 0,0:01:25.00,0:01:26.00,Default,,0,0,0,,
+Comment: 0,0:01:26.00,0:01:29.00,Default,,0,0,0,template line,{\pos($x,$y)\t($start,$end,\bord0)}Template source
+Dialogue: 1,0:01:26.00,0:01:29.00,Sign,,0,0,0,,{\p1}m 0 0 l 80 0 80 40 0 40 {\p0} Drawing followed by text
+Dialogue: 0,0:01:29.00,0:01:32.00,Default,,0,0,0,,Literal {opening brace\NSecond line with a hard\hspace
+Dialogue: 0,0:01:32.00,0:01:35.00,Default,,0,0,0,,{An editor's note ending in \}{\test(1)\b1}Unknown tags do not hide known tags.
 
 [Fonts]
 ; Encoded syntax fixtures only; these payloads are not usable font files.

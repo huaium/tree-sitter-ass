@@ -1,8 +1,8 @@
 #ifndef TREE_SITTER_ASS_SYNTAX_H_
 #define TREE_SITTER_ASS_SYNTAX_H_
 
-enum AssRecord { NO_RECORD, EVENT_RECORD, STYLE_RECORD };
-#define ASS_SYNTAX_SERIALIZED_SIZE (ASS_FIELD_COUNT * 8 + 27)
+enum AssRecord { NO_RECORD, EVENT_RECORD, STYLE_RECORD, COMMENT_RECORD };
+#define ASS_SYNTAX_SERIALIZED_SIZE (ASS_FIELD_COUNT * 8 + 28)
 _Static_assert(ASS_SYNTAX_SERIALIZED_SIZE + 3 <= TREE_SITTER_SERIALIZATION_BUFFER_SIZE,
                "ASS scanner state must fit in Tree-sitter's serialization buffer");
 
@@ -24,6 +24,7 @@ typedef struct {
   bool in_override;
   bool drawing;
   bool in_clip;
+  bool literal_text;
 } AssSyntax;
 
 static void ass_default_formats(AssSyntax *syntax) {
@@ -143,18 +144,87 @@ static bool ass_syntax_tokens_valid(const bool *valid) {
     valid[DRAWING_MODE_TAG] || valid[CLIP_NAME] || valid[CLIP_END] ||
     valid[TRANSFORM_START] || valid[TRANSFORM_END] || valid[DRAW_MOVE] ||
     valid[DRAW_MOVE_OPEN] || valid[DRAW_LINE] || valid[DRAW_BEZIER] || valid[DRAW_SPLINE] ||
-    valid[DRAW_EXTEND] || valid[DRAW_CLOSE];
+    valid[DRAW_EXTEND] || valid[DRAW_CLOSE] || valid[UNKNOWN_TAG_NAME] || valid[IGNORED_BACKSLASH];
+}
+
+static bool ass_tag_letter(int32_t c) {
+  return (c >= 'A' && c <= 'Z') || (c >= 'a' && c <= 'z');
+}
+
+static bool ass_tag_digit(int32_t c) { return c >= '0' && c <= '9'; }
+
+static bool ass_scan_override_name(AssSyntax *syntax, TSLexer *lexer, const bool *valid) {
+  char name[32] = {0};
+  unsigned length = 0;
+  while (ass_tag_digit(lexer->lookahead)) {
+    if (length + 1 < sizeof(name)) name[length] = (char)lexer->lookahead;
+    length++;
+    lexer->advance(lexer, false);
+  }
+  while (ass_tag_letter(lexer->lookahead)) {
+    if (length + 1 < sizeof(name)) name[length] = (char)lexer->lookahead;
+    length++;
+    lexer->advance(lexer, false);
+  }
+  lexer->mark_end(lexer);
+  if (strcmp(name, "p") == 0 && valid[DRAWING_MODE_TAG]) {
+    while (ass_horizontal_space(lexer->lookahead)) lexer->advance(lexer, false);
+    bool negative = lexer->lookahead == '-';
+    if (lexer->lookahead == '-' || lexer->lookahead == '+') lexer->advance(lexer, false);
+    bool nonzero = false;
+    while (ass_tag_digit(lexer->lookahead)) {
+      nonzero = nonzero || lexer->lookahead != '0';
+      lexer->advance(lexer, false);
+    }
+    if (syntax->transform_depth == 0) syntax->drawing = !negative && nonzero;
+    lexer->result_symbol = DRAWING_MODE_TAG;
+    return true;
+  }
+  if (strcmp(name, "t") == 0 || strcmp(name, "clip") == 0 || strcmp(name, "iclip") == 0) {
+    while (ass_horizontal_space(lexer->lookahead)) lexer->advance(lexer, false);
+    if (lexer->lookahead == '(') {
+      if (name[0] == 't' && valid[TRANSFORM_START]) {
+        syntax->transform_depth++;
+        lexer->result_symbol = TRANSFORM_START;
+        return true;
+      }
+      if (name[0] != 't' && valid[CLIP_NAME]) {
+        syntax->in_clip = true;
+        lexer->result_symbol = CLIP_NAME;
+        return true;
+      }
+    }
+  }
+  // Font and reset tags have undelimited string arguments.
+  if (strncmp(name, "fn", 2) == 0 || name[0] == 'r') return false;
+  static const char *const known[] = {
+    "b", "i", "u", "s", "bord", "xbord", "ybord", "shad", "xshad", "yshad",
+    "be", "blur", "fs", "fscx", "fscy", "fsc", "fsp", "fr", "frx", "fry", "frz",
+    "fax", "fay", "fe", "a", "an", "q", "k", "K", "kf", "ko", "kt", "pbo",
+    "c", "1c", "2c", "3c", "4c", "alpha", "1a", "2a", "3a", "4a", "pos", "org", "move", "fad", "fade",
+  };
+  for (unsigned i = 0; i < sizeof(known) / sizeof(known[0]); i++) {
+    if (strcmp(name, known[i]) == 0) return false;
+  }
+  while (ass_tag_letter(lexer->lookahead) || ass_tag_digit(lexer->lookahead)) lexer->advance(lexer, false);
+  lexer->mark_end(lexer);
+  lexer->result_symbol = UNKNOWN_TAG_NAME;
+  return true;
 }
 
 static bool ass_scan_syntax(AssSyntax *syntax, TSLexer *lexer, const bool *valid) {
-  if (valid[TEXT_START] && syntax->record == EVENT_RECORD &&
+  if (valid[TEXT_START] && (syntax->record == EVENT_RECORD || syntax->record == COMMENT_RECORD) &&
       syntax->index == syntax->event_text && !syntax->in_text) {
     lexer->mark_end(lexer);
     syntax->in_text = true;
     syntax->drawing = false;
     syntax->transform_depth = 0;
+    syntax->literal_text = false;
     lexer->result_symbol = TEXT_START;
     return true;
+  }
+  if (syntax->in_text && syntax->drawing && !syntax->in_override) {
+    while (ass_horizontal_space(lexer->lookahead)) lexer->advance(lexer, true);
   }
   if (syntax->in_text && valid[TEXT_END] &&
       (lexer->eof(lexer) || lexer->lookahead == '\r' || lexer->lookahead == '\n')) {
@@ -175,7 +245,8 @@ static bool ass_scan_syntax(AssSyntax *syntax, TSLexer *lexer, const bool *valid
     lexer->result_symbol = RECORD_END;
     return true;
   }
-  if (valid[RECORD_END] && !syntax->in_text && syntax->record == EVENT_RECORD &&
+  if (valid[RECORD_END] && !syntax->in_text &&
+      (syntax->record == EVENT_RECORD || syntax->record == COMMENT_RECORD) &&
       syntax->index == syntax->event_text) {
     lexer->mark_end(lexer);
     syntax->record = NO_RECORD;
@@ -195,7 +266,7 @@ static bool ass_scan_syntax(AssSyntax *syntax, TSLexer *lexer, const bool *valid
       return true;
     }
     if (!syntax->field_started) {
-      const uint32_t *positions = syntax->record == EVENT_RECORD ? syntax->event_positions : syntax->style_positions;
+      const uint32_t *positions = syntax->record == STYLE_RECORD ? syntax->style_positions : syntax->event_positions;
       enum AssField kind = FIELD_unknown;
       for (unsigned i = 0; i < FIELD_unknown; i++) {
         if (positions[i] == syntax->index) { kind = (enum AssField)i; break; }
@@ -210,7 +281,18 @@ static bool ass_scan_syntax(AssSyntax *syntax, TSLexer *lexer, const bool *valid
     return false;
   }
   if (!syntax->in_text) return false;
-  if (valid[OVERRIDE_START] && lexer->lookahead == '{') {
+  if (syntax->record == COMMENT_RECORD && valid[TEXT_CHUNK]) {
+    bool content = false;
+    while (!lexer->eof(lexer) && lexer->lookahead != '\r' && lexer->lookahead != '\n') {
+      lexer->advance(lexer, false);
+      content = true;
+    }
+    if (!content) return false;
+    lexer->mark_end(lexer);
+    lexer->result_symbol = TEXT_CHUNK;
+    return true;
+  }
+  if (valid[OVERRIDE_START] && !syntax->literal_text && lexer->lookahead == '{') {
     lexer->advance(lexer, false);
     lexer->mark_end(lexer);
     // Without a closing brace, ASS treats the rest of this line as literal text.
@@ -218,7 +300,7 @@ static bool ass_scan_syntax(AssSyntax *syntax, TSLexer *lexer, const bool *valid
            lexer->lookahead != '\n' && lexer->lookahead != '}') lexer->advance(lexer, false);
     if (lexer->lookahead != '}') {
       if (!valid[TEXT_CHUNK] || syntax->drawing) return false;
-      lexer->mark_end(lexer);
+      syntax->literal_text = true;
       lexer->result_symbol = TEXT_CHUNK;
       return true;
     }
@@ -236,46 +318,21 @@ static bool ass_scan_syntax(AssSyntax *syntax, TSLexer *lexer, const bool *valid
   }
   if (syntax->in_override) {
     while (ass_horizontal_space(lexer->lookahead)) lexer->advance(lexer, true);
-    if (valid[DRAWING_MODE_TAG] && lexer->lookahead == 'p') {
+    if (valid[IGNORED_BACKSLASH] && lexer->lookahead == '\\') {
       lexer->advance(lexer, false);
       lexer->mark_end(lexer);
-      while (ass_horizontal_space(lexer->lookahead)) lexer->advance(lexer, false);
-      bool negative = lexer->lookahead == '-';
-      if (lexer->lookahead == '-' || lexer->lookahead == '+') lexer->advance(lexer, false);
-      bool nonzero = false;
-      bool digits = false;
-      while (lexer->lookahead >= '0' && lexer->lookahead <= '9') {
-        digits = true;
-        nonzero = nonzero || lexer->lookahead != '0';
-        lexer->advance(lexer, false);
-      }
-      if (!digits && lexer->lookahead != '\\' && lexer->lookahead != '}' &&
-          lexer->lookahead != ')' && lexer->lookahead != '\r' &&
-          lexer->lookahead != '\n' && !lexer->eof(lexer)) return false;
-      if (syntax->transform_depth == 0) syntax->drawing = !negative && nonzero;
-      lexer->result_symbol = DRAWING_MODE_TAG;
+      if (ass_tag_letter(lexer->lookahead) || ass_tag_digit(lexer->lookahead)) return false;
+      lexer->result_symbol = IGNORED_BACKSLASH;
       return true;
     }
-    if (valid[CLIP_NAME] && (lexer->lookahead == 'c' || lexer->lookahead == 'i')) {
-      if (lexer->lookahead == 'i') lexer->advance(lexer, false);
-      if (!ass_match_word(lexer, "clip")) return false;
-      lexer->mark_end(lexer);
-      syntax->in_clip = true;
-      lexer->result_symbol = CLIP_NAME;
-      return true;
+    if (valid[UNKNOWN_TAG_NAME] && (ass_tag_letter(lexer->lookahead) || ass_tag_digit(lexer->lookahead))) {
+      return ass_scan_override_name(syntax, lexer, valid);
     }
     if (valid[CLIP_END] && lexer->lookahead == ')') {
       lexer->advance(lexer, false);
       lexer->mark_end(lexer);
       syntax->in_clip = false;
       lexer->result_symbol = CLIP_END;
-      return true;
-    }
-    if (valid[TRANSFORM_START] && lexer->lookahead == 't') {
-      lexer->advance(lexer, false);
-      lexer->mark_end(lexer);
-      syntax->transform_depth++;
-      lexer->result_symbol = TRANSFORM_START;
       return true;
     }
     if (valid[TRANSFORM_END] && lexer->lookahead == ')' && syntax->transform_depth > 0) {
@@ -308,7 +365,8 @@ static bool ass_scan_syntax(AssSyntax *syntax, TSLexer *lexer, const bool *valid
   }
   if (!valid[TEXT_CHUNK] && !valid[ESCAPE_SEQUENCE]) return false;
   bool content = false;
-  while (!lexer->eof(lexer) && lexer->lookahead != '\r' && lexer->lookahead != '\n' && lexer->lookahead != '{') {
+  while (!lexer->eof(lexer) && lexer->lookahead != '\r' && lexer->lookahead != '\n' &&
+         (syntax->literal_text || lexer->lookahead != '{')) {
     if (lexer->lookahead == '\\') {
       lexer->advance(lexer, false);
       if (lexer->lookahead == 'N' || lexer->lookahead == 'n' || lexer->lookahead == 'h' ||
@@ -351,6 +409,7 @@ static unsigned ass_syntax_serialize(const AssSyntax *syntax, char *buffer) {
   buffer[offset++] = syntax->in_override;
   buffer[offset++] = syntax->drawing;
   buffer[offset++] = syntax->in_clip;
+  buffer[offset++] = syntax->literal_text;
   return offset;
 }
 
@@ -379,6 +438,7 @@ static unsigned ass_syntax_deserialize(AssSyntax *syntax, const char *buffer) {
   syntax->in_override = buffer[offset++];
   syntax->drawing = buffer[offset++];
   syntax->in_clip = buffer[offset++];
+  syntax->literal_text = buffer[offset++];
   return offset;
 }
 

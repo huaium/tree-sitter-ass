@@ -45,6 +45,8 @@ enum TokenType {
   DRAW_EXTEND,
   DRAW_CLOSE,
   END_OF_FILE,
+  UNKNOWN_TAG_NAME,
+  IGNORED_BACKSLASH,
 #define ASS_FIELD_TOKEN(name) FIELD_TOKEN_##name,
   ASS_FIELDS(ASS_FIELD_TOKEN)
 #undef ASS_FIELD_TOKEN
@@ -293,7 +295,8 @@ static bool ass_scan(AssScanner *scanner, TSLexer *lexer, const bool *valid_symb
   if (symbol == EVENT_FORMAT_KEY) {
     ass_read_typed_format(&scanner->syntax, lexer);
   } else {
-    scanner->syntax.record = symbol == STYLE_KEY ? STYLE_RECORD : EVENT_RECORD;
+    scanner->syntax.record = symbol == STYLE_KEY ? STYLE_RECORD
+      : symbol == EVENT_COMMENT_KEY ? COMMENT_RECORD : EVENT_RECORD;
     scanner->syntax.index = 0;
     scanner->syntax.field_started = false;
     scanner->syntax.in_text = false;

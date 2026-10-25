@@ -22,6 +22,9 @@ The four `value` children contain `end: (timestamp)`, `start: (timestamp)`,
 its commas. `Comment`, `Picture`, `Sound`, `Movie`, and `Command` event records
 use the same declared layout. Standard layouts apply when `Format:` is absent.
 `ScriptType` and the style section distinguish SSA and ASS defaults.
+Comment event fields retain the same typed layout, but their Text field is
+preserved as free-form `text`. This permits disabled dialogue, karaoke templates,
+and code without requiring renderable override arguments.
 
 Style fields include `style_name`, `font_name`, `font_size`, `primary_colour`,
 `secondary_colour`, `tertiary_colour` (SSA), `outline_colour`, `back_colour`,
@@ -41,6 +44,7 @@ and `drawing_command` children. `\N`, `\n`, and `\h` are escape sequences,
 as are the libass literal-brace extensions `\{` and `\}`.
 Whitespace and Unicode text are preserved. An opening brace with no closing
 brace on the same line remains literal text, as required by ASS text handling.
+Line-break and hard-space escapes after that brace still have their own nodes.
 
 Override blocks contain `numeric_tag`, `color_tag`, `alpha_tag`, `font_tag`,
 `reset_tag`, `position_tag`, `move_tag`, `fade_tag`, `transform_tag`, `clip_tag`,
@@ -48,12 +52,17 @@ Override blocks contain `numeric_tag`, `color_tag`, `alpha_tag`, `font_tag`,
 available through the `name` field and a `tag_name` child. Numeric arguments,
 colors, font names, timing arguments, and nested tags remain separate children.
 Unknown parenthesized arguments remain structured in `unknown_tag_arguments`.
+Unknown names with standard-tag prefixes remain unknown tags; a bare backslash
+inside an override block is preserved as `override_comment`. Ignored text inside
+transforms also uses `override_comment` nodes.
 
 Drawing mode starts with `\p` followed by a positive scale and ends with `\p0`.
 Drawing commands also occur inside vector clips. Nodes distinguish
 `drawing_move`, `drawing_move_open`, `drawing_line`, `drawing_bezier`,
 `drawing_spline`, `drawing_extend`, and `drawing_close`; coordinate pairs are
 `drawing_point` nodes with `x` and `y` fields. Drawing mode resets at each event.
+Spaces and tabs between a drawing and the next override block or line ending
+are accepted.
 
 ## Attachments and error recovery
 

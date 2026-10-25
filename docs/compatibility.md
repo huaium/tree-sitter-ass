@@ -14,15 +14,16 @@ comprehensive specification that resolves every renderer's behavior.
 | Metadata | Standard headers, LayoutResX/Y, libass Kerning/Language headers, `!:` metadata, Aegisub extradata |
 | Styles | All ASS/SSA scalar fields, hex/decimal colors, booleans, fractional sizes and scaling, ASS2 top/bottom margins and RelativeTo |
 | Events | Default and declared formats, reordered/unknown/empty columns, timestamps, marked/layer fields, actors, margins, Text containing commas |
-| Legacy records | Comment, Picture, Sound, Movie, Command |
-| Text | Unicode, whitespace, line breaks, hard spaces, unmatched literal braces, libass escaped braces |
+| Legacy records | Comment, Picture, Sound, Movie, Command; free-form Comment text including Aegisub karaoke templates and code |
+| Text | Unicode, whitespace, line breaks, hard spaces, unmatched literal braces with subsequent escapes, libass escaped braces |
 | Simple tags | Every numeric tag in the Aegisub reference; omitted arguments, signed and fractional arguments; legacy `\fsc`; color/alpha channels; font names and style resets |
 | Complex tags | Position/origin, both movement forms, both fade forms, all four transform signatures, every documented animatable tag inside each transform signature |
 | Clipping | Rectangle/inverse rectangle, vector/inverse vector, optional drawing scale, rectangular clips inside transforms |
-| Drawing | m, n, l, b, s, p, c; repeated point groups, negative coordinates, drawing-mode changes across blocks and event boundaries |
+| Drawing | m, n, l, b, s, p, c; repeated point groups, negative coordinates, whitespace before blocks and line endings, drawing-mode changes across blocks and event boundaries |
+| Ignored content | Bare backslashes in override blocks, unknown tag prefixes and numbered names, comments inside transforms |
 | Effects | Banner, Scroll up/down, optional parameters, unknown effect strings |
 | Attachments | Multiple font/graphics declarations, encoded lines resembling sections or comments |
-| Editing | Incremental edits to formats, sections, drawing mode, Unicode, and literal/override brace boundaries; recovery after malformed records |
+| Editing | Incremental edits to formats, sections, drawing mode, Unicode, comment/dialogue record type, and literal/override brace boundaries; recovery after malformed records |
 
 `bindings/node/compatibility_test.js` contains the reference-oriented matrix;
 the other Node tests and checked-in samples cover fields, attachments, errors,

@@ -129,3 +129,78 @@ test("adding or removing a closing brace incrementally matches a fresh parse", (
   assert.equal(restored.rootNode.toString(), parser.parse(before).rootNode.toString());
   assert.equal(restored.rootNode.descendantsOfType("override_block").length, 0);
 });
+
+test("drawing whitespace permits override boundaries and line endings", () => {
+  for (const whitespace of [" ", "\t", "  \t  "]) {
+    for (const newline of ["\n", "\r\n", "\r", ""]) {
+      const source = event(`{\\p1}m 0 0${whitespace}{\\bord2}l 10 10${whitespace}{\\p0}Text`);
+      const root = parse(source.slice(0, -1) + newline);
+      assert.equal(root.descendantsOfType("drawing_line").length, 1);
+      assert.equal(root.descendantsOfType("text").at(-1).text, "Text");
+      const trailing = parse(event(`{\\p1}m 0 0${whitespace}`).slice(0, -1) + newline);
+      assert.equal(trailing.descendantsOfType("drawing_move").length, 1);
+    }
+  }
+});
+
+test("comment text preserves templates and arbitrary code without parsing tags", () => {
+  for (const text of ["{\\pos($x,$y)\\t($start,$end,\\bord0)}Template, text",
+    "{\\pos(!x!,!y!)}Template", "{\\move($x,$y,100,200)}Template",
+    'local path = "C:\\temp\\file"', "{\\p1}not a drawing", "{\\pos(1,2,3)}disabled", ""]) {
+    const source = event(text).replace("Dialogue:", "Comment:") +
+      "Dialogue:0:00:03.00,0:00:04.00,{\\pos(100,200)}Visible\n";
+    const root = parse(source);
+    const pair = root.descendantsOfType("key_value_pair").find((node) => node.childForFieldName("key_comment"));
+    const values = pair.childForFieldName("values_comment");
+    assert.equal(values.namedChildCount, 3);
+    assert.equal(values.lastNamedChild.text, text);
+    assert.equal(values.descendantsOfType("timestamp").length, 2);
+    assert.equal(values.descendantsOfType("override_block").length, 0);
+    assert.equal(root.descendantsOfType("position_tag").length, 1);
+  }
+});
+
+test("ignored override content and unknown prefixes preserve surrounding tags", () => {
+  for (const name of ["test", "clipper", "iclipExtra", "posh", "1vc", "vendor2x"]) {
+    const root = parse(event(`{\\b1\\${name}(1,(2,3))\\i1}Text`));
+    assert.deepEqual(root.descendantsOfType("unknown_tag").map((node) => node.childForFieldName("name").text), [name]);
+    assert.equal(root.descendantsOfType("numeric_tag").length, 2);
+    assert.equal(root.descendantsOfType("transform_tag").length, 0);
+  }
+  for (const text of ["{A note ending in \\}Text", "{\\\\b1}Text", "{\\?ignored\\b1}Text"]) {
+    const root = parse(event(text));
+    assert.ok(root.descendantsOfType("override_comment").length > 0);
+  }
+  const transformed = parse(event("{\\t(0,500,\\fs30 note\\test(1)\\bord2)}Text"));
+  assert.equal(transformed.descendantsOfType("transform_tag").length, 1);
+  assert.equal(transformed.descendantsOfType("numeric_tag").length, 2);
+  assert.equal(transformed.descendantsOfType("unknown_tag").length, 1);
+});
+
+test("literal opening braces retain subsequent escape nodes and record boundaries", () => {
+  const text = "A {literal\\Nnext\\nsoft\\hword and {another";
+  const root = parse(event(text) + "Dialogue:0:00:03.00,0:00:04.00,{\\b1}Bold\n");
+  assert.deepEqual(root.descendantsOfType("escape_sequence").map((node) => node.text), ["\\N", "\\n", "\\h"]);
+  const values = root.descendantsOfType("key_value_pair").find((node) => node.childForFieldName("key_dialogue"))
+    .childForFieldName("values_dialogue");
+  assert.equal(values.lastNamedChild.text, text);
+  assert.equal(root.descendantsOfType("override_block").length, 1);
+});
+
+test("incremental changes between comments and dialogue restore scanner modes", () => {
+  for (const [from, to] of [["Comment:", "Dialogue:"], ["Dialogue:", "Comment:"]]) {
+    const parser = new Parser();
+    parser.setLanguage(language);
+    const before = event("{\\b1}Text").replace("Dialogue:", from);
+    const tree = parser.parse(before);
+    const offset = before.indexOf(from);
+    tree.edit({ startIndex: offset, oldEndIndex: offset + from.length, newEndIndex: offset + to.length,
+      startPosition: { row: 2, column: 0 }, oldEndPosition: { row: 2, column: from.length },
+      newEndPosition: { row: 2, column: to.length } });
+    const after = before.replace(from, to);
+    const result = parser.parse(after, tree);
+    assert.equal(result.rootNode.hasError, false);
+    assert.equal(result.rootNode.toString(), parser.parse(after).rootNode.toString());
+    assert.equal(result.rootNode.descendantsOfType("numeric_tag").length, to === "Dialogue:" ? 1 : 0);
+  }
+});
