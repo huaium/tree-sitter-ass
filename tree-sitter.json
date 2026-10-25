@@ -18,8 +18,8 @@
     "description": "A tree-sitter parser for ass/ssa subtitles",
     "authors": [
       {
-        "name": "Huaium",
-        "email": "huaium233@gmail.com",
+        "name": "huaium",
+        "email": "adamzhangme@gmail.com",
         "url": "https://github.com/huaium"
       }
     ],

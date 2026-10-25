@@ -1,6 +1,6 @@
 /**
  * @file A tree-sitter parser for ass subtitles
- * @author Huaium <huaium233@gmail.com>
+ * @author huaium <adamzhangme@gmail.com>
  * @license MIT
  */
 

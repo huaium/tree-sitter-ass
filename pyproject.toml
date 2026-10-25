@@ -13,7 +13,7 @@ classifiers = [
   "Topic :: Text Processing :: Linguistic",
   "Typing :: Typed",
 ]
-authors = [{ name = "Huaium", email = "huaium233@gmail.com" }]
+authors = [{ name = "huaium", email = "adamzhangme@gmail.com" }]
 requires-python = ">=3.10"
 license.text = "MIT"
 readme = "README.md"

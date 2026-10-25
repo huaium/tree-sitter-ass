@@ -2,7 +2,7 @@
 name = "tree-sitter-ass"
 description = "A tree-sitter parser for ass/ssa subtitles"
 version = "0.1.0"
-authors = ["Huaium <huaium233@gmail.com>"]
+authors = ["huaium <adamzhangme@gmail.com>"]
 license = "MIT"
 readme = "README.md"
 keywords = ["incremental", "parsing", "tree-sitter", "ass", "ssa"]
