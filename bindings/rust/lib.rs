@@ -50,4 +50,37 @@ mod tests {
             .set_language(&super::LANGUAGE.into())
             .expect("Error loading Ass parser");
     }
+
+    #[test]
+    fn test_subtitle_variants_and_errors() {
+        let mut parser = tree_sitter::Parser::new();
+        parser.set_language(&super::LANGUAGE.into()).unwrap();
+        for source in [
+            "",
+            "[Script Info]\nTitle: Example\n",
+            "\u{feff}[script info]\r\n; comment\r\nTitle: 字幕 🎬\r\n",
+            "[V4 Styles]\nFormat: Name,Fontname\nStyle: Default,Arial\n",
+            "[V4+ Styles]\nFormat: Name,Fontname\nStyle: Default,Arial\n",
+            "[Custom Section]\nCustom Field: custom value\n",
+            "[Events]\nDialogue: 0,0:00:01.00,0:00:02.00,Default,Hello\n",
+        ] {
+            let tree = parser.parse(source, None).unwrap();
+            assert!(!tree.root_node().has_error(), "{source:?}");
+            assert_eq!(tree.root_node().end_byte(), source.len());
+        }
+        let malformed = parser.parse("[Script Info", None).unwrap();
+        assert!(malformed.root_node().has_error());
+    }
+
+    #[test]
+    fn test_highlight_query() {
+        let language = super::LANGUAGE.into();
+        let query = tree_sitter::Query::new(
+            &language,
+            include_str!("../../queries/highlights.scm"),
+        ).unwrap();
+        assert!(query.capture_names().contains(&"type"));
+        assert!(query.capture_names().contains(&"property"));
+        assert!(query.capture_names().contains(&"string"));
+    }
 }

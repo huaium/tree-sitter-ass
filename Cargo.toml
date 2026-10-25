@@ -9,6 +9,7 @@ keywords = ["incremental", "parsing", "tree-sitter", "ass", "ssa"]
 categories = ["parser-implementations", "parsing", "text-editors"]
 repository = "https://github.com/huaium/tree-sitter-ass"
 edition = "2021"
+rust-version = "1.90"
 autoexamples = false
 
 build = "bindings/rust/build.rs"
@@ -25,10 +26,10 @@ include = [
 path = "bindings/rust/lib.rs"
 
 [dependencies]
-tree-sitter-language = "0.1"
+tree-sitter-language = "0.1.9"
 
 [build-dependencies]
 cc = "1.2"
 
 [dev-dependencies]
-tree-sitter = "0.25.3"
+tree-sitter = "0.27.1"

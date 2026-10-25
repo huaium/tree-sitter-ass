@@ -1,6 +1,7 @@
 {
   "name": "tree-sitter-ass",
   "version": "0.1.0",
+  "packageManager": "pnpm@12.15.0+sha512.b3951d6d6ff4a9f13dc7cf56cd28d2b8eb37dbcc9c68e52e1e1191873ea9f82a017287ab50baadc5ccc494f036c67c0e47eb13608c2fa36f47711b61ea128e61",
   "description": "A tree-sitter parser for ass/ssa subtitles",
   "repository": "https://github.com/huaium/tree-sitter-ass",
   "license": "MIT",
@@ -29,15 +30,16 @@
     "*.wasm"
   ],
   "dependencies": {
-    "node-addon-api": "^8.2.1",
-    "node-gyp-build": "^4.8.2"
+    "node-addon-api": "^8.9.2",
+    "node-gyp-build": "^4.8.4"
   },
   "devDependencies": {
     "prebuildify": "^6.0.1",
-    "tree-sitter-cli": "^0.25.3"
+    "tree-sitter": "^0.25.1",
+    "tree-sitter-cli": "^0.27.1"
   },
   "peerDependencies": {
-    "tree-sitter": "^0.21.1"
+    "tree-sitter": "^0.25.1"
   },
   "peerDependenciesMeta": {
     "tree-sitter": {
