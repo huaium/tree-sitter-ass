@@ -11,6 +11,7 @@ SRC_DIR := src
 
 TS ?= tree-sitter
 export NEW_VERSION
+export RELEASE_TAG = $(VERSION)
 
 # install directory layout
 PREFIX ?= /usr/local
@@ -101,4 +102,7 @@ version:
 	uv run --no-project --offline python scripts/set_version.py
 	pnpm exec tree-sitter generate
 
-.PHONY: all install uninstall clean test version
+tag dtag:
+	uv run --no-project --offline python scripts/tag.py $@
+
+.PHONY: all install uninstall clean test version tag dtag
