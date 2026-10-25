@@ -178,7 +178,7 @@ module.exports = grammar({
             ";",
             "!:", // Old version
           ),
-          /[^\[\r\n]*/,
+          /[^\r\n]*/,
         ),
       ),
 

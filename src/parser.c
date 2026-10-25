@@ -2202,8 +2202,7 @@ static bool ts_lex(TSLexer *lexer, TSStateId state) {
       ACCEPT_TOKEN(sym_comment);
       if (lookahead != 0 &&
           lookahead != '\n' &&
-          lookahead != '\r' &&
-          lookahead != '[') ADVANCE(278);
+          lookahead != '\r') ADVANCE(278);
       END_STATE();
     case 279:
       ACCEPT_TOKEN(aux_sym_key_value_pair_token1);
