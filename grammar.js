@@ -28,7 +28,7 @@ function caseInsensitive(word) {
     word
       .split("")
       .map((char) =>
-        char === " " ? "\\s+" : `[${char.toLowerCase()}${char.toUpperCase()}]`,
+        char === " " ? "[ \\t]+" : `[${char.toLowerCase()}${char.toUpperCase()}]`,
       )
       .join(""),
   );
@@ -56,7 +56,7 @@ function sectionRules($, words) {
     field(
       "section_name_styles",
       alias(
-        choice(caseInsensitive("v4 Styles"), caseInsensitive("v4+ Styles")),
+        token.immediate(choice(caseInsensitive("v4 Styles"), caseInsensitive("v4+ Styles"))),
         $.section_name,
       ),
     ),
@@ -67,7 +67,7 @@ function sectionRules($, words) {
     rules.push(
       field(
         `section_name_${toLowerCaseUnderscored(word)}`,
-        alias(caseInsensitive(word), $.section_name),
+        alias(token.immediate(caseInsensitive(word)), $.section_name),
       ),
     ),
   );
@@ -76,7 +76,7 @@ function sectionRules($, words) {
   rules.push(
     prec(
       -1,
-      field("section_name_custom", alias(token(/[^\]]+/), $.section_name)),
+      field("section_name_custom", alias(token.immediate(/[^\[\]\r\n]+/), $.section_name)),
     ),
   );
 
@@ -164,7 +164,7 @@ module.exports = grammar({
       ),
 
     // Section header
-    section_header: ($) => seq("[", $._section_name, "]"),
+    section_header: ($) => seq("[", $._section_name, token.immediate("]")),
     _section_name: ($) =>
       choice(
         ...sectionRules($, ["Script Info", "Events", "Fonts", "Graphics"]),

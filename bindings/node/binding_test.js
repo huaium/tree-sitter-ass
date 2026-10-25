@@ -10,6 +10,46 @@ test("can load grammar", () => {
   assert.doesNotThrow(() => parser.setLanguage(require(".")));
 });
 
+test("section headers cannot cross line endings or contain opening brackets", () => {
+  const parser = new Parser();
+  parser.setLanguage(require("."));
+  for (const newline of ["\n", "\r\n", "\r"]) {
+    for (const header of [
+      `[Script${newline}Info]`,
+      `[V4+${newline}Styles]`,
+      `[Custom${newline}Section]`,
+      `[${newline}Events]`,
+      `[Events${newline}]`,
+      "[Bad[Name]",
+      "[Broken",
+    ]) {
+      const source = `${header}${newline}[Events]${newline}Format: Layer,Text`;
+      const root = parser.parse(source).rootNode;
+      assert.strictEqual(root.hasError, true, source);
+      for (const name of root.descendantsOfType("section_name")) {
+        assert.doesNotMatch(name.text, /[\r\n\[]/, source);
+      }
+      const eventsHeader = root.descendantsOfType("section_header").find((node) =>
+        node.childForFieldName("section_name_events")?.text === "Events" && !node.hasError,
+      );
+      assert.ok(eventsHeader, source);
+      assert.strictEqual(eventsHeader.text, "[Events]");
+      assert.strictEqual(eventsHeader.parent.lastNamedChild.childForFieldName("key_format").text, "Format");
+    }
+  }
+});
+
+test("single-line section names retain spaces, tabs, and case handling", () => {
+  const parser = new Parser();
+  parser.setLanguage(require("."));
+  for (const header of ["[Script Info]", "[sCrIpT  iNfO]", "[Script\tInfo]", "[V4 Styles]", "[V4+ Styles]", "[Custom Section]", "[ Custom Section ]"]) {
+    const root = parser.parse(header + "\nTitle: Example").rootNode;
+    assert.strictEqual(root.hasError, false, header);
+    assert.strictEqual(root.namedChildCount, 1, header);
+    assert.strictEqual(root.namedChild(0).namedChild(0).text, header);
+  }
+});
+
 test("brackets in comments preserve following fields and sections", () => {
   const parser = new Parser();
   const language = require(".");
