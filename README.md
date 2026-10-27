@@ -21,8 +21,16 @@ tested syntax, and parser boundaries.
 
 ## Development
 
-Install dependencies with `pnpm install`. Run the Node binding tests with
-`pnpm test` and regenerate the parser with `pnpm exec tree-sitter generate`.
+Install dependencies with `pnpm install`. Development and release commands use
+Just; run `just` to list recipes. Run the Node binding tests with
+`just test-node` and regenerate the parser with `just generate`.
+`just test` runs all binding and maintenance-script suites; `just test-grammar`
+runs Tree-sitter corpus tests. Individual binding recipes require their existing
+toolchains and dependencies. Rebuild native Node and Python bindings after
+changing parser or scanner sources before testing those bindings.
+
+The Makefile handles C library builds and installation: `make`, `make install`,
+`make uninstall`, and `make clean`. C consumers do not need Just.
 
 The parser uses Tree-sitter ABI 15 and requires a Tree-sitter runtime version
 of 0.25 or newer. The Go binding requires Go 1.23 or newer, and Rust
@@ -40,10 +48,10 @@ Update the package version across all manifests, local package lock entries, C
 build metadata, and the generated parser with:
 
 ```sh
-make version NEW_VERSION=0.2.0
+just version 0.2.0
 ```
 
-This uses uv, Python 3.11 or newer, pnpm, and the existing local Tree-sitter CLI.
+This uses Just, uv, Python 3.11 or newer, pnpm, and the existing local Tree-sitter CLI.
 Use a release version in `MAJOR.MINOR.PATCH` form, with each component at most
 255 to fit Tree-sitter's metadata. Dependency runtime versions stay unchanged.
 Go and Swift package releases use Git tags; this command does not create a tag
@@ -54,7 +62,7 @@ or commit.
 After updating and committing the version, push the commit and run:
 
 ```sh
-make tag VERSION=v0.1.1
+just tag v0.1.2
 ```
 
 The command asks for confirmation before creating and pushing the tag. A `v*`
@@ -68,7 +76,7 @@ The wheels use the CPython 3.10 stable ABI for regular CPython 3.10 and newer.
 To delete a local and remote tag, with confirmation:
 
 ```sh
-make dtag VERSION=v0.1.1
+just dtag v0.1.2
 ```
 
 Deleting a tag does not delete its GitHub Release or attached assets.

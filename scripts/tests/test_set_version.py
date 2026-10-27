@@ -19,7 +19,7 @@ class VersionRecipeTests(unittest.TestCase):
         self.directory = tempfile.TemporaryDirectory()
         self.addCleanup(self.directory.cleanup)
         self.root = Path(self.directory.name)
-        for filename in FILES + ["grammar.js"]:
+        for filename in FILES + ["grammar.js", "justfile"]:
             shutil.copy2(ROOT / filename, self.root / filename)
         shutil.copytree(ROOT / "src", self.root / "src",
                         ignore=shutil.ignore_patterns("*.o"))
@@ -30,9 +30,9 @@ class VersionRecipeTests(unittest.TestCase):
                             "UV_PYTHON": sys.executable}
 
     def run_recipe(self, version=None):
-        arguments = ["make", "version"]
+        arguments = ["just", "version"]
         if version is not None:
-            arguments.append(f"NEW_VERSION={version}")
+            arguments.append(version)
         environment = {key: value for key, value in self.environment.items() if key != "NEW_VERSION"}
         return subprocess.run(arguments, cwd=self.root, env=environment,
                               capture_output=True, text=True)

@@ -10,8 +10,6 @@ VERSION := 0.1.2
 SRC_DIR := src
 
 TS ?= tree-sitter
-export NEW_VERSION
-export RELEASE_TAG = $(VERSION)
 
 # install directory layout
 PREFIX ?= /usr/local
@@ -95,14 +93,4 @@ uninstall:
 clean:
 	$(RM) $(OBJS) $(LANGUAGE_NAME).pc lib$(LANGUAGE_NAME).a lib$(LANGUAGE_NAME).$(SOEXT)
 
-test:
-	$(TS) test
-
-version:
-	uv run --no-project --offline python scripts/set_version.py
-	pnpm exec tree-sitter generate
-
-tag dtag:
-	uv run --no-project --offline python scripts/tag.py $@
-
-.PHONY: all install uninstall clean test version tag dtag
+.PHONY: all install uninstall clean

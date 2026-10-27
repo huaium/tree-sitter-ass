@@ -10,6 +10,8 @@ constraints belong to consumers.
 ## Source layout
 
 - `grammar.js`: grammar rules and public syntax node definitions.
+- `Makefile`: C library builds, dependency tracking, installation, and cleanup.
+- `justfile`: development tests, parser generation, version updates, and tag recipes.
 - `src/scanner.c`: external token declarations, section handling, and scanner entry points.
 - `src/syntax.h`: format mapping, dialogue scanning, tag handling, and serialized state.
 - `src/fields.h`: shared field definitions.
@@ -27,6 +29,9 @@ constraints belong to consumers.
 - Treat current file contents as authoritative and preserve unrelated user changes.
 - Keep author metadata as `huaium <adamzhangme@gmail.com>`.
 - Use pnpm for Node development and uv for Python development.
+- Use Just for development and release tasks; keep C build and installation
+  targets in Make. Use `just generate`, `just version VERSION`, `just tag TAG`,
+  and `just dtag TAG`. Tag recipes retain interactive confirmation.
 - Do not install dependencies in the host environment on the user's behalf.
   Explain any required dependency, provide the exact installation command, and
   wait for the user to run it. Dependency installation inside a dev container is allowed.
@@ -38,7 +43,7 @@ constraints belong to consumers.
 ## Parser changes
 
 - Edit grammar/scanner sources and regenerate generated artifacts with
-  `pnpm exec tree-sitter generate`. Do not edit generated artifacts manually.
+  `just generate`. Do not edit generated artifacts manually.
 - Keep the grammar's external-token order synchronized with `enum TokenType`
   in `src/scanner.c`. Keep typed field ordering synchronized with `ASS_FIELDS`.
 - Serialize every scanner state value that affects parsing. Keep serialization

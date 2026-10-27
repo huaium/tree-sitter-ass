@@ -1,4 +1,5 @@
 import os
+import shutil
 import subprocess
 import sys
 import tempfile
@@ -6,7 +7,7 @@ import unittest
 from pathlib import Path
 
 
-SCRIPT = Path(__file__).resolve().parents[1] / "tag.py"
+ROOT = Path(__file__).resolve().parents[2]
 
 
 class TagTests(unittest.TestCase):
@@ -24,6 +25,9 @@ class TagTests(unittest.TestCase):
 
             git("init", "--bare", str(remote), cwd=root)
             git("init", str(work), cwd=root)
+            shutil.copy2(ROOT / "justfile", work / "justfile")
+            (work / "scripts").mkdir()
+            shutil.copy2(ROOT / "scripts/tag.py", work / "scripts/tag.py")
             git("config", "user.name", "huaium")
             git("config", "user.email", "adamzhangme@gmail.com")
             git("commit", "--allow-empty", "-m", "test: initialize repository")
@@ -31,8 +35,8 @@ class TagTests(unittest.TestCase):
 
             def recipe(mode, reply, tag="v0.1.1"):
                 return subprocess.run(
-                    [sys.executable, str(SCRIPT), mode], cwd=work,
-                    env={**os.environ, "RELEASE_TAG": tag},
+                    ["just", mode, tag], cwd=work,
+                    env={**os.environ, "UV_PYTHON": sys.executable},
                     input=reply + "\n", capture_output=True, text=True,
                 )
 
