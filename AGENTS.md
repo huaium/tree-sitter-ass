@@ -61,9 +61,11 @@ constraints belong to consumers.
 - Preserve the `values` node's repeating `column_1` through `column_6` fields.
   Count empty values and the final Text value when assigning positions. Keep
   semantic field names inside each `value` independent of column position.
-- Use `@ass.column.1` through `@ass.column.6` for Format, Style, and event
+- Use `@string.ass.column.1` through `@string.ass.column.6` for Format, Style, and event
   metadata columns in their applicable sections. Keep Script Info and attachment
   payloads on their ordinary syntax captures.
+  Preserve the `string` capture prefix so unmapped palettes inherit string
+  highlighting. Verify fallback with the real Tree-sitter highlighter.
 - Exclude final event Text from rainbow captures. Preserve its strings, tags,
   escapes, colors, drawings, and punctuation. Highlight entire Comment events
   as comments, including metadata and free-form template text.

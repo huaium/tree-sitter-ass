@@ -60,7 +60,7 @@ make tag VERSION=v0.1.1
 The command asks for confirmation before creating and pushing the tag. A `v*`
 tag push starts the release workflow, which checks the package versions and
 attaches the npm tarball, Cargo crate, Python source distribution, tested Python
-wheels for Linux x86_64, macOS Intel/Apple Silicon, and Windows x86_64, a source
+wheels for Linux x86_64, macOS Apple Silicon, and Windows x86_64, a source
 archive for Go/Swift/C consumers, standalone `highlights.scm`, and SHA-256
 checksums to a GitHub Release. Packages are published only to GitHub Releases.
 The wheels use the CPython 3.10 stable ABI for regular CPython 3.10 and newer.

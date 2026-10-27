@@ -101,7 +101,7 @@ affected syntax during incremental parsing.
 
 ## Rainbow column highlighting
 
-`queries/highlights.scm` assigns `@ass.column.1` through `@ass.column.6` to
+`queries/highlights.scm` assigns `@string.ass.column.1` through `@string.ass.column.6` to
 `Format:` and `Style:` values and the metadata columns of event records.
 The palette repeats by position, including empty fields. Reordered formats
 retain the same positional colors as their corresponding record values.
@@ -115,13 +115,15 @@ ordinary syntax captures retain the editor's default priority (100 in Neovim).
 Editors must honor these priorities, or configure equivalent precedence, to
 show column colors over scalar captures and comments over all record contents.
 
-Custom captures require a palette in the editor theme. For example, in Neovim,
+The captures inherit standard string highlighting when no column palette is
+configured. To give columns distinct colors, define a palette in the editor
+theme. For example, in Neovim,
 after enabling Tree-sitter highlighting for the `ass` language:
 
 ```lua
 local colors = { "#e06c75", "#e5c07b", "#98c379", "#56b6c2", "#61afef", "#c678dd" }
 for index, color in ipairs(colors) do
-  vim.api.nvim_set_hl(0, "@ass.column." .. index .. ".ass", { fg = color })
+  vim.api.nvim_set_hl(0, "@string.ass.column." .. index .. ".ass", { fg = color })
 end
 ```
 

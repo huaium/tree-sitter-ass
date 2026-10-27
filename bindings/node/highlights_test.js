@@ -1,6 +1,8 @@
 const assert = require("node:assert/strict");
-const { readFileSync } = require("node:fs");
+const { mkdtempSync, readFileSync, rmSync, writeFileSync } = require("node:fs");
+const { tmpdir } = require("node:os");
 const { join } = require("node:path");
+const { execFileSync } = require("node:child_process");
 const { test } = require("node:test");
 const Parser = require("tree-sitter");
 const language = require(".");
@@ -17,7 +19,7 @@ function parse(source) {
 function columns(root) {
   let document = root;
   while (document.parent) document = document.parent;
-  return query.captures(document).filter(({ name, node }) => name.startsWith("ass.column.") &&
+  return query.captures(document).filter(({ name, node }) => name.startsWith("string.ass.column.") &&
     node.startIndex >= root.startIndex && node.endIndex <= root.endIndex);
 }
 
@@ -31,7 +33,7 @@ test("rainbow columns repeat beyond two cycles and preserve empty fields", () =>
       const captures = columns(record);
       assert.equal(captures.length, count);
       fields.forEach((field, index) => {
-        assert.equal(captures[index].name, `ass.column.${index % 6 + 1}`);
+        assert.equal(captures[index].name, `string.ass.column.${index % 6 + 1}`);
         assert.equal(captures[index].node.id, field.id);
         assert.equal(record.lastNamedChild.fieldNameForNamedChild(index), `column_${index % 6 + 1}`);
       });
@@ -101,5 +103,27 @@ test("inserting a column incrementally updates following rainbow fields", () => 
   assert.equal(incremental.hasError, false);
   const captureRanges = (root) => columns(root).map(({ name, node }) => [name, node.startIndex, node.endIndex]);
   assert.deepEqual(captureRanges(incremental), captureRanges(fresh));
-  assert.equal(columns(incremental).at(-1).name, "ass.column.3");
+  assert.equal(columns(incremental).at(-1).name, "string.ass.column.3");
+});
+
+test("real HTML highlighter falls back to string colors without a rainbow theme", () => {
+  const directory = mkdtempSync(join(tmpdir(), "ass-highlight-fallback-"));
+  try {
+    const config = join(directory, "config.json");
+    const sample = join(directory, "sample.ass");
+    writeFileSync(config, JSON.stringify({ "parser-directories": [], theme: { string: "#98c379" } }));
+    writeFileSync(sample, "[V4+ Styles]\nFormat:Name,Fontname\nStyle:Default,Arial\n" +
+      "[Events]\nFormat:Style,Text\nDialogue:Default,Hello, world\n");
+    const html = execFileSync(process.execPath, [
+      require.resolve("tree-sitter-cli/cli.js"), "highlight",
+      "--grammar-path", join(__dirname, "../.."), "--config-path", config,
+      "--html", "--style", "minimal", "--layout", "fragment", sample,
+    ], { encoding: "utf8", env: { ...process.env, XDG_CACHE_HOME: directory } });
+    for (const text of ["Name", "Fontname", "Default", "Arial"]) {
+      assert.ok(html.includes(`<span class='string'>${text}</span>`), text);
+    }
+    assert.ok(html.includes("Hello, world"));
+  } finally {
+    rmSync(directory, { recursive: true, force: true });
+  }
 });
