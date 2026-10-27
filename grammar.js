@@ -174,6 +174,23 @@ function numberArguments($, count) {
   return seq($.number, ...Array.from({ length: count - 1 }, () => seq(",", $.number)));
 }
 
+function columnRules(record) {
+  return Object.fromEntries(Array.from({ length: 6 }, (_, index) => {
+    const name = `_${record ? "record_" : ""}columns_${index + 1}`;
+    return [name, ($) => {
+      const next = $[`_${record ? "record_" : ""}columns_${(index + 1) % 6 + 1}`];
+      const column = `column_${index + 1}`;
+      if (record) {
+        return choice(
+          seq(field(column, alias($._typed_field, $.value)), alias($._event_separator, ","), next),
+          field(column, choice(alias($._typed_field, $.value), alias($._text_value, $.value))),
+        );
+      }
+      return seq(field(column, $.value), optional(seq(",", next)));
+    }];
+  }));
+}
+
 module.exports = grammar({
   name: "ass",
 
@@ -334,12 +351,10 @@ module.exports = grammar({
           "filename",
         ]),
       ),
-    values: ($) => seq($.value, repeat(seq(",", $.value))),
-    _record_values: ($) => seq(
-      repeat(seq(alias($._typed_field, $.value), alias($._event_separator, ","))),
-      choice(alias($._typed_field, $.value), alias($._text_value, $.value)),
-      $._record_end,
-    ),
+    ...columnRules(false),
+    ...columnRules(true),
+    values: ($) => $._columns_1,
+    _record_values: ($) => seq($._record_columns_1, $._record_end),
     _typed_field: ($) => choice(...Object.entries(typedFields).map(([name, type]) =>
       seq($[`_field_${name}`], optional(field(name, $[type]))),
     )),

@@ -16,6 +16,8 @@ constraints belong to consumers.
 - `src/parser.c`, `src/grammar.json`, `src/node-types.json`: generated artifacts.
 - `queries/highlights.scm`: highlighting queries.
 - `bindings/`: Node, Rust, Python, Go, and Swift bindings and tests.
+- `bindings/node/highlights_test.js`: highlight capture, positional column, and
+  incremental highlighting regression tests.
 - `test/`: checked-in ASS/SSA samples and their coverage notes.
 - `docs/syntax.md` and `docs/compatibility.md`: syntax tree contract and compatibility coverage.
 
@@ -53,6 +55,27 @@ constraints belong to consumers.
   or token boundaries change. Compare incremental parses with fresh parses.
 - Keep samples in English; use descriptive fictional metadata. Retain targeted
   Unicode coverage. Mark attachment syntax payloads that are not usable binary assets.
+
+## Highlighting changes
+
+- Preserve the `values` node's repeating `column_1` through `column_6` fields.
+  Count empty values and the final Text value when assigning positions. Keep
+  semantic field names inside each `value` independent of column position.
+- Use `@ass.column.1` through `@ass.column.6` for Format, Style, and event
+  metadata columns in their applicable sections. Keep Script Info and attachment
+  payloads on their ordinary syntax captures.
+- Exclude final event Text from rainbow captures. Preserve its strings, tags,
+  escapes, colors, drawings, and punctuation. Highlight entire Comment events
+  as comments, including metadata and free-form template text.
+- Keep rainbow capture priority 110 and Comment event priority 120 above ordinary
+  syntax captures. Document editor precedence requirements and custom palette
+  setup in `docs/syntax.md`; do not assume all editors honor priority metadata.
+- Test reordered formats, empty fields, more than two palette cycles, SSA/ASS/ASS2
+  layouts, Text commas, nested transforms, vector clips, Comment events, and
+  incremental column edits. Verify captures and priority metadata; report
+  separately whether rendering was checked in an actual editor.
+- Ship queries with the matching generated parser. Queries using positional
+  fields require a parser that exposes those fields.
 
 ## Validation
 

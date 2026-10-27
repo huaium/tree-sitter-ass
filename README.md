@@ -13,6 +13,9 @@ A tree-sitter parser for ass/ssa subtitles.
 - Unknown fields and tag syntax, line-based error recovery, and incremental edits.
 
 See [the syntax tree reference](docs/syntax.md) for node names and query examples.
+The highlight query supports a six-color repeating column palette for formats,
+styles, and event metadata while preserving dialogue syntax and Comment events.
+See [rainbow highlighting setup](docs/syntax.md#rainbow-column-highlighting).
 The [compatibility coverage](docs/compatibility.md) records the reference sources,
 tested syntax, and parser boundaries.
 

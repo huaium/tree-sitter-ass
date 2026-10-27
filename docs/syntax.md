@@ -22,6 +22,10 @@ The four `value` children contain `end: (timestamp)`, `start: (timestamp)`,
 its commas. `Comment`, `Picture`, `Sound`, `Movie`, and `Command` event records
 use the same declared layout. Standard layouts apply when `Format:` is absent.
 `ScriptType` and the style section distinguish SSA and ASS defaults.
+The `values` node also labels its direct `value` children `column_1` through
+`column_6`, repeating every six columns. These positional fields include empty
+values and the final Text value; they do not replace semantic fields inside
+each value. Node names and value boundaries are unchanged.
 Comment event fields retain the same typed layout, but their Text field is
 preserved as free-form `text`. This permits disabled dialogue, karaoke templates,
 and code without requiring renderable override arguments.
@@ -94,3 +98,35 @@ The highlight query covers sections, keys, scalar fields, text, tags, drawings,
 escapes, comments, and error nodes. Scanner state is serialized so edits to a
 format declaration, attachment section, or drawing-mode tag invalidate the
 affected syntax during incremental parsing.
+
+## Rainbow column highlighting
+
+`queries/highlights.scm` assigns `@ass.column.1` through `@ass.column.6` to
+`Format:` and `Style:` values and the metadata columns of event records.
+The palette repeats by position, including empty fields. Reordered formats
+retain the same positional colors as their corresponding record values.
+Ordinary Script Info fields and attachment payloads keep string highlighting.
+
+Event Text is excluded from rainbow captures, including commas inside Text.
+Its text, override tags, escapes, and drawing commands retain syntax captures.
+Entire `Comment:` events use `@comment`, including metadata and template text.
+The query sets priority 110 for rainbow captures and 120 for Comment events;
+ordinary syntax captures retain the editor's default priority (100 in Neovim).
+Editors must honor these priorities, or configure equivalent precedence, to
+show column colors over scalar captures and comments over all record contents.
+
+Custom captures require a palette in the editor theme. For example, in Neovim,
+after enabling Tree-sitter highlighting for the `ass` language:
+
+```lua
+local colors = { "#e06c75", "#e5c07b", "#98c379", "#56b6c2", "#61afef", "#c678dd" }
+for index, color in ipairs(colors) do
+  vim.api.nvim_set_hl(0, "@ass.column." .. index .. ".ass", { fg = color })
+end
+```
+
+Reapply these definitions after changing the colorscheme and adjust the colors
+for contrast with the background. Consumers without custom capture mappings
+can continue using the standard string, number, and color captures. Install
+the matching generated parser together with the updated query: older parsers
+do not expose the positional fields required by this query.
