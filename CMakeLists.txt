@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.13)
 
 project(tree-sitter-ass
-        VERSION "0.1.1"
+        VERSION "0.1.2"
         DESCRIPTION "A tree-sitter parser for ass subtitles"
         HOMEPAGE_URL "https://github.com/huaium/tree-sitter-ass"
         LANGUAGES C)

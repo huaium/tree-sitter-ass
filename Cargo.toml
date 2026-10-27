@@ -1,7 +1,7 @@
 [package]
 name = "tree-sitter-ass"
 description = "A tree-sitter parser for ass/ssa subtitles"
-version = "0.1.1"
+version = "0.1.2"
 authors = ["huaium <adamzhangme@gmail.com>"]
 license = "MIT"
 readme = "README.md"

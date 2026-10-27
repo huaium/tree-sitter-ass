@@ -5,7 +5,7 @@ build-backend = "setuptools.build_meta"
 [project]
 name = "tree-sitter-ass"
 description = "A tree-sitter parser for ass/ssa subtitles"
-version = "0.1.1"
+version = "0.1.2"
 keywords = ["incremental", "parsing", "tree-sitter", "ass", "ssa"]
 classifiers = [
   "Intended Audience :: Developers",

@@ -196,7 +196,7 @@ dependencies = [
 
 [[package]]
 name = "tree-sitter-ass"
-version = "0.1.1"
+version = "0.1.2"
 dependencies = [
  "cc",
  "tree-sitter",
