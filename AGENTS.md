@@ -89,6 +89,7 @@ cargo test --locked --offline
 go test -a -mod=readonly -count=1 ./bindings/go
 swift test --disable-automatic-resolution
 uv run --no-sync python -m unittest discover -s bindings/python/tests -v
+uv run --no-sync python -m unittest discover -s scripts/tests -v
 git diff --check
 ```
 
@@ -98,6 +99,9 @@ Use existing toolchains and dependencies. Go's `-a` flag ensures changes to
 included C sources are rebuilt. For shared grammar/scanner changes, run all
 binding suites and verify the Make and CMake builds. Check packaging when adding
 source files or headers required by bindings.
+For Python packaging changes, verify repeated wheel builds after bytecode has
+been generated in the build directory. Wheels must exclude `__pycache__`,
+`.pyc`, and `.pyo` files while retaining the extension, typing files, and queries.
 
 Metadata and documentation-only edits need relevant consistency checks, without
 adding tests that simply repeat their contents.

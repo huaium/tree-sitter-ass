@@ -1,10 +1,12 @@
 from os import path
+from pathlib import Path
 from platform import system
 from sysconfig import get_config_var
 
 from setuptools import Extension, find_packages, setup
 from setuptools.command.build import build
 from setuptools.command.egg_info import egg_info
+from setuptools.command.install_lib import install_lib
 from wheel.bdist_wheel import bdist_wheel
 
 sources = [
@@ -43,6 +45,17 @@ class BdistWheel(bdist_wheel):
         return python, abi, platform
 
 
+class InstallLib(install_lib):
+    def get_exclusions(self):
+        exclusions = super().get_exclusions()
+        build_dir = Path(self.build_dir)
+        for filename in build_dir.rglob("*"):
+            relative = filename.relative_to(build_dir)
+            if "__pycache__" in relative.parts or filename.suffix in (".pyc", ".pyo"):
+                exclusions.add(path.join(self.install_dir, str(relative)))
+        return exclusions
+
+
 class EggInfo(egg_info):
     def find_sources(self):
         super().find_sources()
@@ -74,6 +87,7 @@ setup(
         "build": Build,
         "bdist_wheel": BdistWheel,
         "egg_info": EggInfo,
+        "install_lib": InstallLib,
     },
     zip_safe=False
 )
